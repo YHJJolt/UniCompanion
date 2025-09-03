@@ -1,0 +1,435 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body class="bg-gray-50">
+{% include  'includes/navBar.html' %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+
+            <!-- main content -->
+            <div>
+                <div class="flex items-start justify-between">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div>
+                                <img src="/media/{{ post.user.image }}" class="h-10 w-10 rounded-full">
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">{{ post.user.username }}</p>
+                            <p class="text-xs text-gray-500">{{ post.created_at }}</p>
+                        </div>
+                    </div>
+                    <!-- Right side with flair and menu button -->
+                    <div class="flex items-start">
+                        <!-- Flair as a direct element, not position:absolute -->
+                        <div class="{{ post.flair.flair_color }} text-white text-xs font-bold px-3 py-1 rounded-md mr-2 inline-block">
+                            {{ post.flair.flair_name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <h3 class="text-lg font-semibold text-gray-900">{{ post.title }}</h3>
+                    <p class="mt-2 text-gray-700">{{ post.description|linebreaksbr }}</p>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                    <div class="flex space-x-4">
+                        <!-- Thumbs Up / Like Button -->
+                        <button id="likeButton-{{ post.post_id }}"
+                            {% if post.isUpvoted %}
+                                class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                onclick="toggleLike({{ post.post_id }})">
+                                <i id="likeIcon-{{ post.post_id }}" class="fas fa-thumbs-up mr-1"></i>
+                            {% else %}
+                                class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                onclick="toggleLike({{ post.post_id }})">
+                                <i id="likeIcon-{{ post.post_id }}" class="far fa-thumbs-up mr-1"></i>
+                            {% endif %}
+                            <span id="likeCount-{{ post.post_id }}" class="text-sm">{{ post.getUpvotes }}</span>
+                        </button>
+
+                        <!-- Thumbs Down / Dislike Button -->
+                        <button id="dislikeButton-{{ post.post_id }}"
+                            {% if post.isDownvoted %}
+                                class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                onclick="toggleDislike({{ post.post_id }})">
+                                <i id="dislikeIcon-{{ post.post_id }}" class="fas fa-thumbs-down mr-1"></i>
+                            {% else %}
+                                class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                onclick="toggleDislike({{ post.post_id }})">
+                                <i id="dislikeIcon-{{ post.post_id }}" class="far fa-thumbs-down mr-1"></i>
+                            {% endif %}
+                            <span id="dislikeCount-{{ post.post_id }}" class="text-sm">{{ post.getDownvotes }}</span>
+                        </button>
+
+                        <!-- Comment Button -->
+                        <button class="flex items-center text-gray-500 hover:text-primary-600" onclick="commentBtn()">
+                            <i id="commentIcon" class="far fa-comment mr-1"></i>
+                            <span id="comment" class="text-sm">{{ post.getComments }}</span>
+                        </button>
+
+<!--                        &lt;!&ndash; Bookmark Button &ndash;&gt;-->
+<!--                        <button class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+<!--                            onclick="bookMarkBtn()" title="Bookmark this post">-->
+<!--                            <i id="bookmarkIcon" class="far fa-bookmark"></i>-->
+<!--                            <span id="bookmarkCount" class="text-sm">0</span>-->
+<!--                        </button>-->
+
+                        <!-- Share Button -->
+                        <button class="rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                            onclick="shareBtn()" title="Share this post">
+                            <i id="shareIcon" class="fas fa-share"></i>
+<!--                            <span id="shareCount" class="text-sm">0</span>-->
+                        </button>
+
+                        <!-- Report button -->
+                        <button class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                            onclick="reportContent('post', {{ post.post_id }}, '{{ csrf_token }}')" title="Report this post">
+                            <i id="reportIcon" class="fas fa-flag"></i>
+                            <span id="reportCount" class="text-sm"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Modal -->
+            <div id="reportModal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+                    <button onclick="closeReportModal()"
+                        class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                    <h2 class="text-xl font-semibold mb-2">Submit a report</h2>
+                    <p class="mb-4 text-gray-600 text-sm">Let us know what's happening, and we'll look into it.</p>
+                    <div id="reportReasons" class="flex flex-wrap gap-2 mb-4">
+                        <!-- Reasons will be injected by JS -->
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeReportModal()"
+                            class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+                        <button onclick="submitReport()"
+                            class="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-700">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            <!-- Left Sidebar placeholder for alignment -->
+            <div class="w-full md:w-56 flex-shrink-0"></div>
+
+            <!-- Comment Box -->
+            <div class="flex-1">
+                <!-- Create Comment-->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <form method="POST" action="{% url 'indivPost_addComment' %}?postId={{ post.post_id }}">
+                        {% csrf_token %}
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ commentForm.label }}</h3>
+                        <div class="space-y-4">
+                            <div>
+<!--                            <textarea id="commentTextarea" placeholder="Share your thoughts..."-->
+<!--                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-none"-->
+<!--                                rows="4"></textarea>-->
+                                {{ commentForm.content }}
+                            </div>
+                            <div class="flex justify-end">
+                                <button id="submitComment" type="submit"
+                                    class="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors foul-button">
+                                    Post Comment
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Comments List -->
+                <div class="mt-6 bg-white rounded-lg shadow-sm p-6">
+                    <h3 id="commentCountHeading" class="text-lg font-semibold text-gray-900 mb-4">Comments ({{ post.getComments }})</h3>
+                    <div class="space-y-4">
+                        {% for comment in comments %}
+                            <div class="flex space-x-3">
+                                <div class="flex-shrink-0">
+                                    <img src="/media/{{ comment.user.image }}" class="h-8 w-8 rounded-full bg-blue-200 flex items-center justify-center text-blue-600 text-sm font-semibold">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <p class="text-sm font-medium text-gray-900">{{ comment.user.username }}</p>
+                                            <p class="text-xs text-gray-500">{{ comment.created_at }}</p>
+                                        </div>
+                                        <p class="text-sm text-gray-700 mt-1">{{ comment.content|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-4 mt-2 ml-3">
+                                        {% if comment.isUpvoted %}
+                                        <button id="like-comment-{{ comment.post_comment_id }}" class="text-xs text-gray-500 hover:text-primary-600 text-primary-600"
+                                            onclick="toggleCommentLike({{ comment.post_comment_id }})">
+                                            <i id="commentLikeIcon-{{ comment.post_comment_id }}" class="fas fa-thumbs-up mr-1"></i>
+                                            <span id="commentLikeCount-{{ comment.post_comment_id }}" class="text-xs">{{ comment.getUpvotes }}</span>
+                                        </button>
+                                        {% else %}
+                                        <button id="like-comment-{{ comment.post_comment_id }}" class="text-xs text-gray-500 hover:text-primary-600"
+                                            onclick="toggleCommentLike({{ comment.post_comment_id }})">
+                                            <i id="commentLikeIcon-{{ comment.post_comment_id }}" class="far fa-thumbs-up mr-1"></i>
+                                            <span id="commentLikeCount-{{ comment.post_comment_id }}" class="text-xs">{{ comment.getUpvotes }}</span>
+                                        </button>
+                                        {% endif %}
+                                        {% if comment.isDownvoted %}
+                                        <button id="dislike-comment-{{ comment.post_comment_id }}" class="text-xs text-gray-500 hover:text-primary-600 text-primary-600"
+                                            onclick="toggleCommentDislike({{ comment.post_comment_id }})">
+                                            <i id="commentDislikeIcon-{{ comment.post_comment_id }}" class="fas fa-thumbs-down mr-1"></i>
+                                            <span id="commentDislikeCount-{{ comment.post_comment_id }}" class="text-xs">{{ comment.getDownvotes }}</span>
+                                        </button>
+                                        {% else %}
+                                        <button id="dislike-comment-{{ comment.post_comment_id }}" class="text-xs text-gray-500 hover:text-primary-600"
+                                            onclick="toggleCommentDislike({{ comment.post_comment_id }})">
+                                            <i id="commentDislikeIcon-{{ comment.post_comment_id }}" class="far fa-thumbs-down mr-1"></i>
+                                            <span id="commentDislikeCount-{{ comment.post_comment_id }}" class="text-xs">{{ comment.getDownvotes }}</span>
+                                        </button>
+                                        {% endif %}
+                                        <button class="text-xs text-gray-500 hover:text-primary-600"
+                                            onclick="reportContent('comment', {{ comment.post_comment_id }}, '{{ csrf_token }}')">Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/function.js' %}"></script>
+    <script>
+        function removeLike(id) {
+                const likeButton = document.getElementById(`likeButton-${id}`);
+                const likeIcon = document.getElementById(`likeIcon-${id}`);
+                const likeCount = document.getElementById(`likeCount-${id}`);
+                const currentCount = parseInt(likeCount.textContent) || 0;
+
+                likeIcon.classList.remove('fas');
+                likeIcon.classList.add('far');
+                likeButton.classList.remove('text-primary-600');
+                likeCount.textContent = currentCount - 1;
+            }
+
+            function removeDislike(id) {
+                const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+                const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+                const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+                const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+                dislikeIcon.classList.remove('fas');
+                dislikeIcon.classList.add('far');
+                dislikeButton.classList.remove('text-primary-600');
+                dislikeCount.textContent = currentCount - 1;
+            }
+
+            // Post like functionality
+            function toggleLike(id) {
+                const likeButton = document.getElementById(`likeButton-${id}`);
+                const likeIcon = document.getElementById(`likeIcon-${id}`);
+                const likeCount = document.getElementById(`likeCount-${id}`);
+
+                const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+
+
+                if (likeButton && likeIcon && likeCount) {
+                    const currentCount = parseInt(likeCount.textContent) || 0;
+
+                    fetch("{% url 'like_post' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `postId=${id}&vote=like`
+                    })
+
+                    if (likeIcon.classList.contains('far')) {
+
+                        // Like the post
+                        likeIcon.classList.remove('far');
+                        likeIcon.classList.add('fas');
+                        likeButton.classList.add('text-primary-600');
+                        likeCount.textContent = currentCount + 1;
+
+                        if (dislikeIcon.classList.contains('fas')) {
+                            removeDislike(id)
+                        }
+
+                        } else {
+                        // Unlike the post
+                        removeLike(id)
+                    }
+                }
+            }
+            // Post dislike functionality
+            function toggleDislike(id) {
+                const likeIcon = document.getElementById(`likeIcon-${id}`);
+                const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+                const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+                const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+
+                if (dislikeButton && dislikeIcon && dislikeCount) {
+                    const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+                    fetch("{% url 'like_post' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `postId=${id}&vote=dislike`
+                    })
+                    if (dislikeIcon.classList.contains('far')) {
+
+                        // dislike the post
+                        dislikeIcon.classList.remove('far');
+                        dislikeIcon.classList.add('fas');
+                        dislikeButton.classList.add('text-primary-600');
+                        dislikeCount.textContent = currentCount + 1;
+
+                        if (likeIcon.classList.contains('fas')) {
+                            removeLike(id)
+                        }
+
+                    } else {
+                        // Undislike the post
+                        removeDislike(id);
+                    }
+                }
+            }
+
+            // Like functionality for comments
+            function toggleCommentLike(id) {
+                const likeButton = document.getElementById(`like-comment-${id}`);
+                const dislikeButton = document.getElementById(`dislike-comment-${id}`)
+                const likeIcon = document.getElementById(`commentLikeIcon-${id}`);
+                const dislikeIcon = document.getElementById(`commentDislikeIcon-${id}`);
+                const likeCount = document.getElementById(`commentLikeCount-${id}`);
+                const dislikeCount = document.getElementById(`commentDislikeCount-${id}`)
+
+                if (likeCount) {
+                    let currentCount = parseInt(likeCount.textContent) || 0;
+
+                    fetch("{% url 'like_comment' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `commentId=${id}&vote=like`
+                    })
+
+                    if (likeIcon.classList.contains('far')) {
+
+                        // Like the post
+                        likeIcon.classList.remove('far');
+                        likeIcon.classList.add('fas');
+                        likeButton.classList.add('text-primary-600');
+                        likeCount.textContent = currentCount + 1;
+
+                        if (dislikeIcon.classList.contains('fas')) {
+                            let currentCount = parseInt(dislikeCount.textContent) || 0;
+                            dislikeIcon.classList.remove('fas');
+                            dislikeIcon.classList.add('far');
+                            dislikeButton.classList.remove('text-primary-600');
+                            dislikeCount.textContent = currentCount - 1;
+                        }
+
+                    } else {
+                        // Unlike the post
+                        likeIcon.classList.remove('fas');
+                        likeIcon.classList.add('far');
+                        likeButton.classList.remove('text-primary-600');
+                        likeCount.textContent = currentCount - 1;
+                    }
+                }
+            }
+
+            // Like functionality for comments
+            function toggleCommentDislike(id) {
+                const likeButton = document.getElementById(`like-comment-${id}`);
+                const dislikeButton = document.getElementById(`dislike-comment-${id}`)
+                const likeIcon = document.getElementById(`commentLikeIcon-${id}`);
+                const dislikeIcon = document.getElementById(`commentDislikeIcon-${id}`);
+                const likeCount = document.getElementById(`commentLikeCount-${id}`);
+                const dislikeCount = document.getElementById(`commentDislikeCount-${id}`)
+
+                if (dislikeCount) {
+                    let currentCount = parseInt(dislikeCount.textContent) || 0;
+
+                    fetch("{% url 'like_comment' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `commentId=${id}&vote=dislike`
+                    })
+
+                    if (dislikeIcon.classList.contains('far')) {
+
+                        // Dislike the post
+                        dislikeIcon.classList.remove('far');
+                        dislikeIcon.classList.add('fas');
+                        dislikeButton.classList.add('text-primary-600');
+                        dislikeCount.textContent = currentCount + 1;
+
+                        if (likeIcon.classList.contains('fas')) {
+                            let currentCount = parseInt(likeCount.textContent) || 0;
+                            likeIcon.classList.remove('fas');
+                            likeIcon.classList.add('far');
+                            likeButton.classList.remove('text-primary-600');
+                            likeCount.textContent = currentCount - 1;
+                        }
+
+                    } else {
+                        // Unlike the post
+                        dislikeIcon.classList.remove('fas');
+                        dislikeIcon.classList.add('far');
+                        dislikeButton.classList.remove('text-primary-600');
+                        dislikeCount.textContent = currentCount - 1;
+                    }
+                }
+            }
+    </script>
+</body>
+
+</html>

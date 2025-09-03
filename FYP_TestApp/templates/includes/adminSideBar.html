@@ -1,0 +1,34 @@
+<!-- Left Sidebar -->
+<div class="sidebar">
+    <nav class="space-y-1">
+        <!-- Dashboard -->
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">  <!-- add active somehow -->
+            <i class="fas fa-chart-line mr-3 text-gray-500"></i>
+            Dashboard
+        </a>
+
+        <!-- Reported Content -->
+        <a href="{% url 'admin_reported' %}" class="sidebar-item">
+            <i class="fas fa-flag mr-3 text-gray-500"></i>
+            Reported Content
+        </a>
+
+        <!-- Edit Flairs -->
+        <a href="{% url 'admin_flair' %}" class="sidebar-item">
+            <i class="fas fa-tags mr-3 text-gray-500"></i>
+            Flairs Management
+        </a>
+
+        <!-- FAQ Chatbox -->
+        <a href="{% url 'admin_faq' %}" class="sidebar-item">
+            <i class="fas fa-comment-dots mr-3 text-gray-500"></i>
+            Chatbot FAQ Setup
+        </a>
+
+        <!-- Appeal Form -->
+        <a href="{% url 'admin_appeal' %}" class="sidebar-item">
+            <i class="fa-solid fa-gavel mr-3 text-gray-500"></i>
+            Appeal Form
+        </a>
+    </nav>
+</div>

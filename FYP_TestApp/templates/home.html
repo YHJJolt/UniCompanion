@@ -1,0 +1,555 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body>
+{% include  'includes/navBar.html' %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+            <!-- Main Content -->
+            <div class="flex-1">
+                <!-- Question Box -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="flex flex-col ">
+                        <h2 class="text-xl font-semibold text-gray-800">&nbspCreate a Post</h2>
+                        <span class="text-sm text-gray-500">&nbsp&nbspShare your thoughts with the community</span>
+
+                        <!-- Title Box with adjusted margins -->
+                        <div id="title-box"
+                            class="w-full p-3 mb-4 mt-2 ml-2 mr-2 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50">
+                            <p class="text-gray-500">Add a title...</p>
+                        </div>
+
+                        <!-- Body Box with adjusted margins -->
+                        <div id="body-box"
+                            class="w-full p-3 min-h-[80px] mb-2 ml-2 mr-2 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50">
+                            <p class="text-gray-500">What's your question or thought today?</p>
+                        </div>
+                    </div>
+
+                    <!-- Popup Modal (Hidden by default) -->
+                    <div id="popup-modal"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6">
+                            <!-- Modal Header -->
+                            <form method="POST" action="{% url 'home_create_post' %}">
+                                {% csrf_token %}
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-medium">Create Post</h3>
+                                    <button id="close-modal" class="text-gray-400 hover:text-gray-500"
+                                        aria-label="Close create post modal">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Flair Label -->
+                                <div class="mb- 1">
+                                    <label class="text-sm text-gray-700">Flair</label>
+                                </div>
+
+                                <!-- Flair Button -->
+                                <div class="mb-4">
+<!--                                    <button-->
+<!--                                        class="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50">-->
+<!--                                        Select Flair <i class="fas fa-chevron-down ml-1"></i>-->
+<!--                                    </button>-->
+                                    {{ PostForm.flair }}
+                                </div>
+
+                                <!-- Title Input -->
+                                <div class="mb-4">
+<!--                                    <input type="text" placeholder="Title"-->
+<!--                                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500">-->
+                                    {{ PostForm.title }}
+                                </div>
+
+                                <!-- Body Text Input -->
+                                <div class="mb-4">
+<!--                                    <textarea rows="6" placeholder="Write your post content here..."-->
+<!--                                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"></textarea>-->
+                                    {{ PostForm.description }}
+                                </div>
+
+                                <!-- Modal Footer -->
+                                <div class="flex justify-end space-x-3">
+                                    <button id="cancel-post"
+                                        class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50">
+                                        Cancel
+                                    </button>
+                                    <button id="submit-post"
+                                        class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 foul-button"
+                                        type="submit">Submit
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                                <!-- Formatting Toolbar no time to do/learn-->
+    <!--                                class="flex flex-wrap items-center space-x-2 mb-4 border-t border-b border-gray-200 py-2">-->
+    <!--                                <button class="p-2 rounded text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+    <!--                                    aria-label="Bold text">-->
+    <!--                                    <i class="fas fa-bold"></i>-->
+    <!--                                </button>-->
+    <!--                                <button class="p-2 rounded text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+    <!--                                    aria-label="Italic text">-->
+    <!--                                    <i class="fas fa-italic"></i>-->
+    <!--                                </button>-->
+    <!--                                <button class="p-2 rounded text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+    <!--                                    aria-label="Insert link">-->
+    <!--                                    <i class="fas fa-link"></i>-->
+    <!--                                </button>-->
+    <!--                                <button class="p-2 rounded text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+    <!--                                    aria-label="Unordered list">-->
+    <!--                                    <i class="fas fa-list-ul"></i>-->
+    <!--                                </button>-->
+    <!--                                <button class="p-2 rounded text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+    <!--                                    aria-label="Attach file">-->
+    <!--                                    <i class="fas fa-paperclip"></i>-->
+    <!--                                </button>-->
+
+                <!-- Posts Feed -->
+                <div class="space-y-4">
+                    <p><b class="latest-heading">Latest Posts</b></p>
+                    <!-- Post 1 -->
+                    {% for post in posts %}
+                    <div class="post-card post-card-link bg-white rounded-lg shadow-sm p-6 transition duration-300 ease-in-out cursor-pointer hover:shadow-md"
+                        id="{{ post.post_id }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex space-x-3">
+                                <div class="flex-shrink-0">
+                                    <img src="/media/{{ post.user.image }}" class="h-10 w-10 rounded-full" alt="user pfp">
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ post.user.username }}</p>
+                                    <p class="text-xs text-gray-500"> {{ post.created_at }}</p>
+                                </div>
+                            </div>
+                            <!-- Right side with flair and menu button -->
+                            <div class="flex items-start">
+                                <!-- Flair as a direct element, not position:absolute -->
+                                <div
+                                    class="{{ post.flair.flair_color }} text-white text-xs font-bold px-3 py-1 rounded-md mr-2 inline-block">
+                                    {{ post.flair.flair_name }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h3 class="text-lg font-semibold text-gray-900">{{ post.title }}
+                            </h3>
+                            <p class="mt-2 text-gray-700">{{ post.description|truncatechars:200 }}
+
+                            </p>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex space-x-4">
+                                <!-- Thumbs Up / Like Button -->
+                                <button id="likeButton-{{ post.post_id }}"
+                                    {% if post.isUpvoted %}
+                                        class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleLike({{ post.post_id }})">
+                                        <i id="likeIcon-{{ post.post_id }}" class="fas fa-thumbs-up mr-1"></i>
+                                    {% else %}
+                                        class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleLike({{ post.post_id }})">
+                                        <i id="likeIcon-{{ post.post_id }}" class="far fa-thumbs-up mr-1"></i>
+                                    {% endif %}
+                                    <span id="likeCount-{{ post.post_id }}" class="text-sm">{{ post.getUpvotes }}</span>
+                                </button>
+
+                                <!-- Thumbs Down / Dislike Button -->
+                                <button id="dislikeButton-{{ post.post_id }}"
+                                    {% if post.isDownvoted %}
+                                        class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleDislike({{ post.post_id }})">
+                                        <i id="dislikeIcon-{{ post.post_id }}" class="fas fa-thumbs-down mr-1"></i>
+                                    {% else %}
+                                        class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleDislike({{ post.post_id }})">
+                                        <i id="dislikeIcon-{{ post.post_id }}" class="far fa-thumbs-down mr-1"></i>
+                                    {% endif %}
+                                    <span id="dislikeCount-{{ post.post_id }}" class="text-sm">{{ post.getDownvotes }}</span>
+                                </button>
+
+                                <!-- Comment Button -->
+                                <button class="flex items-center text-gray-500 hover:text-primary-600"
+                                    onclick="window.location.href='/indivPost?postId={{ post.post_id }}'">
+                                    <i id="commentIcon" class="far fa-comment mr-1"></i>
+                                    <span id="comment" class="text-sm">{{ post.getComments }}</span>
+                                </button>
+
+                                <!-- Bookmark Button -->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+<!--                                    onclick="bookMarkBtn()" title="Bookmark this post">-->
+<!--                                    <i id="bookmarkIcon" class="far fa-bookmark"></i>-->
+<!--                                    <span id="bookmarkCount" class="text-sm">{{ post.getSaves }}</span>-->
+<!--                                </button>-->
+
+                                <!-- Share Button -->
+                                <button class="rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                                    onclick="shareBtn()" title="Share this post">
+                                    <i id="shareIcon" class="fas fa-share"></i>
+                                </button>
+
+                                <!-- Report button -->
+                                <button
+                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                                    onclick="reportContent('post', {{ post.post_id }}, '{{ csrf_token }}')" title="Report this post">
+                                    <i id="reportIcon" class="fas fa-flag"></i>
+                                    <span id="reportCount" class="text-sm"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Report Modal -->
+            <div id="reportModal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+                    <button onclick="closeReportModal()"
+                        class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                    <h2 class="text-xl font-semibold mb-2">Submit a report</h2>
+                    <p class="mb-4 text-gray-600 text-sm">Let us know what's happening, and we'll look into it.</p>
+                    <div id="reportReasons" class="flex flex-wrap gap-2 mb-4">
+                        <!-- Reasons will be injected by JS -->
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeReportModal()"
+                            class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+                        <button onclick="submitReport()"
+                            class="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-700">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Right Sidebar -->
+            <div class="w-full md:w-72 flex-shrink-0 space-y-6">
+<!--                &lt;!&ndash; Trending Now Section &ndash;&gt;-->
+<!--                <div class="bg-white rounded-lg shadow-sm p-6">-->
+<!--                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">-->
+<!--                        <i class="fas fa-fire text-primary-600 mr-2"></i>-->
+<!--                        Trending Now-->
+<!--                    </h3>-->
+<!--                    <div class="space-y-4">-->
+<!--                        <div class="flex items-start space-x-3">-->
+<!--                            <span-->
+<!--                                class="flex-shrink-0 inline-flex items-center justify-center h-6 w-6 rounded-full bg-primary-100 text-primary-800 font-medium text-xs">1</span>-->
+<!--                            <div>-->
+<!--                                <p class="text-sm font-medium text-gray-900">#SpringSemester2023</p>-->
+<!--                                <p class="text-xs text-gray-500">1,245 posts</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="flex items-start space-x-3">-->
+<!--                            <span-->
+<!--                                class="flex-shrink-0 inline-flex items-center justify-center h-6 w-6 rounded-full bg-purple-100 text-purple-800 font-medium text-xs">2</span>-->
+<!--                            <div>-->
+<!--                                <p class="text-sm font-medium text-gray-900">#CS50FinalProject</p>-->
+<!--                                <p class="text-xs text-gray-500">892 posts</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="flex items-start space-x-3">-->
+<!--                            <span-->
+<!--                                class="flex-shrink-0 inline-flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-800 font-medium text-xs">3</span>-->
+<!--                            <div>-->
+<!--                                <p class="text-sm font-medium text-gray-900">#StudyGroupMath101</p>-->
+<!--                                <p class="text-xs text-gray-500">756 posts</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="flex items-start space-x-3">-->
+<!--                            <span-->
+<!--                                class="flex-shrink-0 inline-flex items-center justify-center h-6 w-6 rounded-full bg-green-100 text-green-800 font-medium text-xs">4</span>-->
+<!--                            <div>-->
+<!--                                <p class="text-sm font-medium text-gray-900">#CampusEvents</p>-->
+<!--                                <p class="text-xs text-gray-500">632 posts</p>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <button class="mt-4 w-full text-sm font-medium text-primary-600 hover:text-primary-800">-->
+<!--                        See all trends-->
+<!--                    </button>-->
+<!--                </div>-->
+
+                <!-- Status Selector -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Update Your Status</h3>
+                    <div class="relative">
+                        <select id="statusSelector"
+                            class="status-selector block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                            title="Sort posts">
+                            <option value="active">🟢 Active - Available to chat</option>
+                            <option value="idle">🟡 Idle - Away from keyboard</option>
+                            <option value="focused">🔴 Focused - Do not disturb</option>
+                            <option value="excited">🟣 Excited - Celebrating something!</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Mascot Status -->
+                <div id="animation-container"
+                    class="bg-white rounded-lg shadow-sm p-6 flex flex-col items-center justify-center">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Companion!</h3>
+                    <div class="relative w-48 h-48 flex items-center justify-center rounded-xl">
+                        <img id="mascotImage" src="{% static 'images/mascot_happy.png' %}" alt="mascot"
+                        class="mascot-transition mascot-visible
+                         w-48 h-48 object-contain filter drop-shadow-lg">
+                    </div>
+                    <p id="status-description" class="slide-in-text animate">Ready to chat!</p>
+                </div>
+
+                <!-- Chat Button -->
+                <a href="/companion"
+                    class="w-full py-3 px-4 bg-gradient-to-r from-primary-500 to-primary-700 text-white font-medium rounded-lg shadow-md hover:from-primary-600 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition duration-150 ease-in-out flex items-center justify-center">
+                    <i class="fas fa-comment-dots mr-2"></i>
+                    Click me to chat
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/function.js' %}"></script>
+    <script>
+
+        const description = document.getElementById('status-description');
+
+        function updateStatus(status) {
+            const config = statusConfig[status];
+            if (config) {
+                description.textContent = config.description;
+
+                // Re-trigger the animation
+                description.classList.remove('animate');
+                void description.offsetWidth; // Force reflow
+                description.classList.add('animate');
+            }
+        }
+
+
+
+        // Status selector change effect
+        const statusSelector = document.querySelector('.status-selector');
+        statusSelector.addEventListener('change', function () {
+            const selectedValue = this.value;
+            let colorClass = '';
+
+            switch (selectedValue) {
+                case 'active':
+                    colorClass = 'border-green-200 bg-green-50 text-green-800';
+
+                    break;
+                case 'idle':
+                    colorClass = 'border-yellow-200 bg-yellow-50 text-yellow-800';
+
+                    break;
+                case 'focused':
+                    colorClass = 'border-red-200 bg-red-50 text-red-800';
+                    break;
+                case 'excited':
+                    colorClass = 'border-purple-200 bg-purple-50 text-purple-800';
+                    break;
+            }
+            updateMascot(selectedValue);
+            updateStatus(selectedValue);
+
+
+
+            // Remove all color classes first
+            this.classList.remove('border-green-200', 'bg-green-50', 'text-green-800');
+            this.classList.remove('border-yellow-200', 'bg-yellow-50', 'text-yellow-800');
+            this.classList.remove('border-red-200', 'bg-red-50', 'text-red-800');
+            this.classList.remove('border-purple-200', 'bg-purple-50', 'text-purple-800');
+
+            // Add the selected color class
+            this.classList.add(...colorClass.split(' '));
+        });
+
+        // Function to update mascot with smooth transition
+            function updateMascot(status) {
+                const config = statusConfig[status];
+
+                // Start fade out
+                mascotImage.classList.remove('mascot-visible');
+                mascotImage.classList.add('mascot-hidden');
+
+                // After fade out completes, change image and fade in
+                setTimeout(() => {
+                    mascotImage.src = config.image;
+                    mascotImage.alt = config.alt;
+                    // statusText.textContent = config.description;
+
+                    // Fade in new image
+                    mascotImage.classList.remove('mascot-hidden');
+                    mascotImage.classList.add('mascot-visible');
+                }, 300);
+            }
+
+        const statusConfig = {
+                active: {
+                    image: "{% static 'images/mascot_happy.png' %}",
+                    alt: "Happy mascot - Active",
+                    description: "Ready to chat!"
+                },
+                idle: {
+                    image: "{% static 'images/mascot_sleep.png' %}",
+                    alt: "Sleepy mascot - Idle",
+                    description: "Taking a little break..."
+                },
+                focused: {
+                    image: "{% static 'images/mascot_focus.png' %}",
+                    alt: "Focused mascot - Do not disturb",
+                    description: "In the zone, please don't disturb!"
+                },
+                excited: {
+                    image: "{% static 'images/mascot_excited.png' %}",
+                    alt: "Excited mascot - Celebrating",
+                    description: "Something awesome happened!"
+                }
+            };
+
+
+        // Make post cards clickable (except when clicking a button inside)
+        document.querySelectorAll('.post-card-link').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('button')) return;
+                window.location.href = `/indivPost?postId=${card.id}`;
+            });
+        });
+
+        function removeLike(id) {
+            const likeButton = document.getElementById(`likeButton-${id}`);
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+            const likeCount = document.getElementById(`likeCount-${id}`);
+            const currentCount = parseInt(likeCount.textContent) || 0;
+
+            likeIcon.classList.remove('fas');
+            likeIcon.classList.add('far');
+            likeButton.classList.remove('text-primary-600');
+            likeCount.textContent = currentCount - 1;
+        }
+
+        function removeDislike(id) {
+            const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+            const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+            const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+            dislikeIcon.classList.remove('fas');
+            dislikeIcon.classList.add('far');
+            dislikeButton.classList.remove('text-primary-600');
+            dislikeCount.textContent = currentCount - 1;
+        }
+
+        // Post like functionality
+        function toggleLike(id) {
+            const likeButton = document.getElementById(`likeButton-${id}`);
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+            const likeCount = document.getElementById(`likeCount-${id}`);
+
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+
+
+            if (likeButton && likeIcon && likeCount) {
+                const currentCount = parseInt(likeCount.textContent) || 0;
+
+                fetch("{% url 'like_post' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `postId=${id}&vote=like`
+                    })
+
+                if (likeIcon.classList.contains('far')) {
+
+                    // Like the post
+                    likeIcon.classList.remove('far');
+                    likeIcon.classList.add('fas');
+                    likeButton.classList.add('text-primary-600');
+                    likeCount.textContent = currentCount + 1;
+
+                    if (dislikeIcon.classList.contains('fas')) {
+                        removeDislike(id)
+                    }
+
+                    } else {
+                    // Unlike the post
+                    removeLike(id)
+                }
+            }
+        }
+        // Post dislike functionality
+        function toggleDislike(id) {
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+
+            const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+            const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+
+            if (dislikeButton && dislikeIcon && dislikeCount) {
+                const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+                fetch("{% url 'like_post' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: `postId=${id}&vote=dislike`
+                })
+                if (dislikeIcon.classList.contains('far')) {
+
+                    // dislike the post
+                    dislikeIcon.classList.remove('far');
+                    dislikeIcon.classList.add('fas');
+                    dislikeButton.classList.add('text-primary-600');
+                    dislikeCount.textContent = currentCount + 1;
+
+                    if (likeIcon.classList.contains('fas')) {
+                        removeLike(id)
+                    }
+
+                } else {
+                    // Undislike the post
+                    removeDislike(id);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

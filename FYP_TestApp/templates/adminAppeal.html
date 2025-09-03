@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Appeal Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/reportCon.css' %}">
+</head>
+
+<body>
+    {% include 'includes/adminNav.html' %}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include 'includes/adminSideBar.html' %}
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <header class="content-header bg-white text-black dark:text-black">
+                    <button class="sidebar-toggle hidden">
+                        <i class="toggle-icon fas fa-bars"></i>
+                    </button>
+
+                    <div class="header-title-container bg-white text-black dark:text-black">
+                        <h1 class="header-title bg-white text-black dark:text-black">Appeal Form</h1>
+                    </div>
+                </header>
+
+                <!-- Filter Menu -->
+                <div class="filter-menu bg-white text-black dark:text-black">
+                    <button class="filter-item active" data-type="all">
+                        <i class="fas fa-list"></i> All Appeals
+                    </button>
+                </div>
+
+                <!-- Content Card -->
+                <div class="content-card bg-white text-black dark:text-black">
+                    <div class="card-header">
+                        <h2 class="card-title">Appeals</h2>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th class="bg-white text-black dark:text-black">Student</th>
+                                    <th class="bg-white text-black dark:text-black">Timestamp</th>
+                                    <th class="bg-white text-black dark:text-black">Reasons</th>
+                                    <th class="bg-white text-black dark:text-black">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Table rows will be populated by JavaScript -->
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const data = {
+            users: [
+                {% for appeal in appeals %}
+                {
+                    id: '{{ appeal.user.pk }}',
+                    timestamp: '{{ appeal.created_at|date:"d M Y H:i:s" }}',
+                    reasons: ['{{ appeal.reason|addslashes }}'],
+                    fullReasons: ['{{ appeal.reason|addslashes }}'],
+                    username: '{{ appeal.user.username }}',
+                    email: '{{ appeal.user.stu_email }}'
+                },
+                {% endfor %}
+                // {
+                //     id: 'U002',
+                //     timestamp: '10 Jul 2025, 2:15 p.m.',
+                //     reasons: ['Incorrect disciplinary record.'],
+                //     fullReasons: ['My appeal is based on a misunderstanding. I was absent for medical reasons and had valid documentation.'],
+                //     username: 'farah.nk',
+                //     email: 'p23015488@student.newinti.edu.my'
+                // },
+                // {
+                //     id: 'U003',
+                //     timestamp: '09 Jul 2025, 9:05 a.m.',
+                //     reasons: ['Appealing suspension from course.'],
+                //     fullReasons: ['The suspension was issued without prior warning. I would like a chance to explain the situation and resume my studies.'],
+                //     username: 'ali_rahman',
+                //     email: 'p23017645@student.newinti.edu.my'
+                // }
+            ]
+        };
+
+        let currentFilter = 'all';
+        let currentData = [];
+
+        function init() {
+            updateData();
+        }
+
+        function updateData() {
+            currentData = data.users;
+            renderTable();
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('reports-table-body');
+            tableBody.innerHTML = '';
+
+            currentData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${item.username}</strong><br><span class="text-sm text-gray-600">${item.email}</span></td>
+                    <td><span class="timestamp">${item.timestamp}</span></td>
+                    <td>
+                        <div class="reasons-container">
+                            <span class="reasons-short">${item.reasons[0].slice(0, 62)}${item.reasons[0].length > 62 ? '...' : ''}</span>
+                            <span class="reasons-full" style="display: none;">${item.fullReasons.join(' ')}</span>
+                            ${item.reasons[0].length > 62 ? '<span class="reasons-toggle" onclick="toggleReasons(this)">Show more</span>' : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary btn-sm" onclick="approveItem('${item.id}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="denyItem('${item.id}')">
+                                <i class="fas fa-times"></i> Deny
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function toggleReasons(element) {
+            const container = element.parentElement;
+            const shortReasons = container.querySelector('.reasons-short');
+            const fullReasons = container.querySelector('.reasons-full');
+
+            if (fullReasons.style.display === 'none') {
+                shortReasons.style.display = 'none';
+                fullReasons.style.display = 'block';
+                element.textContent = 'Show less';
+            } else {
+                shortReasons.style.display = 'block';
+                fullReasons.style.display = 'none';
+                element.textContent = 'Show more';
+            }
+        }
+
+        function approveItem(id) {
+            if (confirm('Approve this appeal?')) {
+                console.log('Approved:', id);
+                currentData = currentData.filter(item => item.id !== id);
+
+                fetch("{% url 'admin_appeal_approve' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: `userId=${id}`
+                })
+
+                renderTable();
+            }
+        }
+
+        function denyItem(id) {
+            if (confirm('Deny this appeal?')) {
+                console.log('Denied:', id);
+                currentData = currentData.filter(item => item.id !== id);
+
+                fetch("{% url 'admin_appeal_deny' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: `userId=${id}`
+                })
+
+                renderTable();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+    <script src="{% static 'js/admin-function.js' %}"></script>
+</body>
+
+</html>

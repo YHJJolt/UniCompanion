@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banned - Appeal Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6e45e2 0%, #8929ad 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #banModal,
+        #banThankYou {
+            animation: modalFadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ban-mascot-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(189, 189, 189, 0.15);
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .btn-primary {
+            background-color: #7c3aed;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #6d28d9;
+        }
+
+        @media (max-width: 500px) {
+            .modal-content {
+                max-width: 95vw;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+<!-- TODO: hook this up to signup page, check if user got banned -->
+    <!-- Ban Appeal Modal (always visible on this page) -->
+    <div id="banModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative modal-content">
+            <div id="banStep1">
+                <h2 class="text-xl font-semibold mb-2 text-center text-red-600">You have been banned!</h2>
+                <p class="mb-4 text-gray-700 text-center">Submit an appeal form</p>
+                <div class="flex justify-center">
+                    <button id="banNextBtn"
+                        class="px-6 py-2 rounded btn-primary text-white hover:bg-primary-700">Next</button>
+                </div>
+            </div>
+            <div id="banStep2" class="hidden">
+                <h2 class="text-xl font-semibold mb-2 text-center">Why should we unban you?</h2>
+                <label for="banStudentEmail" class="block text-sm font-medium text-gray-700 mb-1">Student Email:</label>
+                <input id="banStudentEmail" type="email"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    placeholder="your@student.email" required aria-label="Student Email" />
+                <label for="banReason" class="block text-sm font-medium text-gray-700 mb-1">Reason:</label>
+                <textarea id="banReason" rows="4"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none mb-3"
+                    placeholder="State your reason..." required aria-label="Reason"></textarea>
+                <div class="flex justify-end gap-2">
+                    <button id="banCancelBtn"
+                        class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+                    <button id="banSubmitBtn" class="px-4 py-2 rounded btn-primary text-white">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thank You Message Modal (hidden by default) -->
+    <div id="banThankYou" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 text-center">
+            <div class="mb-4">
+                <div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-green-600 text-2xl">✓</span>
+                </div>
+            </div>
+            <h2 class="text-xl font-semibold mb-2 text-green-600">Thank you!</h2>
+            <p class="mb-4 text-gray-700">Please wait for us to get back to you.</p>
+        </div>
+    </div>
+
+    <script>
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Step navigation
+        const banModal = document.getElementById('banModal');
+        const banStep1 = document.getElementById('banStep1');
+        const banStep2 = document.getElementById('banStep2');
+        const banNextBtn = document.getElementById('banNextBtn');
+        const banCancelBtn = document.getElementById('banCancelBtn');
+        const banSubmitBtn = document.getElementById('banSubmitBtn');
+        const banStudentEmail = document.getElementById('banStudentEmail');
+        const banReason = document.getElementById('banReason');
+        const banThankYou = document.getElementById('banThankYou');
+
+        // Next button functionality
+        if (banNextBtn) {
+            banNextBtn.addEventListener('click', function () {
+                banStep1.classList.add('hidden');
+                banStep2.classList.remove('hidden');
+                // Focus on first input field for better UX
+                banStudentEmail.focus();
+            });
+        }
+
+        // Cancel button functionality
+        if (banCancelBtn) {
+            banCancelBtn.addEventListener('click', function () {
+                banStep2.classList.add('hidden');
+                banStep1.classList.remove('hidden');
+                // Clear form fields
+                banStudentEmail.value = '';
+                banReason.value = '';
+            });
+        }
+
+        // Submit button functionality
+        if (banSubmitBtn) {
+            banSubmitBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const email = banStudentEmail.value.trim();
+                const reason = banReason.value.trim();
+
+                // Validation
+                if (!email || !reason) {
+                    alert('Please enter your student email and state your reason.');
+                    return;
+                }
+
+                if (!isValidEmail(email)) {
+                    alert('Please enter a valid email address.');
+                    banStudentEmail.focus();
+                    return;
+                }
+
+                if (reason.length < 10) {
+                    alert('Please provide a more detailed reason (at least 10 characters).');
+                    banReason.focus();
+                    return;
+                }
+
+                // Show success message
+                banModal.classList.add('hidden');
+                banThankYou.classList.remove('hidden');
+
+                fetch("{% url 'add_appeal' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: `email=${email}&reason=${reason}`
+                })
+
+                // Keep the thank you message visible - don't auto-hide
+            });
+        }
+
+        // Enter key handling for better UX
+        banStudentEmail.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                banReason.focus();
+            }
+        });
+
+        banReason.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                banSubmitBtn.click();
+            }
+        });
+    </script>
+</body>
+
+</html>

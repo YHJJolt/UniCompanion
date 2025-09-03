@@ -1,0 +1,651 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - App Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+    <style>
+        /* Security page specific styles */
+        .security-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-secure {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        /* Toggle switch styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-switch .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-switch .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked+.slider {
+            background-color: #7c3aed;
+        }
+
+        .toggle-switch input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    {% include  'includes/navBar.html' %}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Account Settings</h1>
+                    <p class="text-gray-600">Manage your account preferences and security settings</p>
+                </div>
+                <!-- Account Security -->
+                <div class="security-card">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Account Security</h2>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div class="flex items-center">
+                                <i class="fas fa-key text-primary-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Password</h3>
+                                    <p class="text-sm text-gray-600">You will be signed out of your account!</p>
+                                </div>
+                            </div>
+                            <button id="change-password-btn"
+                                class="px-4 py-2 text-primary-600 hover:text-primary-700 font-medium">Change</button>
+                        </div>
+
+                        <div class="flex items-center justify-between py-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-primary-600 mr-3"></i>
+                                <div>
+                                    <h3 class="font-medium text-gray-800">Email Verification</h3>
+                                    <p class="text-sm text-gray-600">{{ user.stu_email }}</p>
+                                </div>
+                            </div>
+                            <span class="status-badge status-secure">
+                                <i class="fas fa-check mr-1"></i>
+                                Verified
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- App Preferences -->
+                <div class="security-card">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">App Preferences</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Dark Mode</h3>
+                                <p class="text-sm text-gray-600">Switch between light and dark theme</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dark-mode-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data & Privacy -->
+                <div class="security-card">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Additional Details</h2>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div>
+                                <h3 class="font-medium text-gray-800">Data Usage Analytics</h3>
+                                <p class="text-sm text-gray-600">Your Data will be kept by UniCompanion to help improve the platform </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="security-card">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Data Management</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button id="privacy-policy-btn"
+                            class="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors text-center">
+                            <i class="fas fa-file-alt text-primary-600 text-2xl mb-2"></i>
+                            <h3 class="font-medium text-gray-800">Privacy Policy</h3>
+                            <p class="text-sm text-gray-600 mt-1">Read our privacy policy</p>
+                        </button>
+
+                        <button onclick="deleteAccount({{ user.pk }})"
+                            class="p-4 border border-red-200 rounded-lg hover:border-red-300 hover:bg-red-50 transition-colors text-center">
+                            <i class="fas fa-trash-alt text-red-600 text-2xl mb-2"></i>
+                            <h3 class="font-medium text-red-800">Delete Account</h3>
+                            <p class="text-sm text-red-600 mt-1">Permanently delete account</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">Change Password</h3>
+                <button id="close-password-modal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="change-password-form">
+                <div class="mb-4">
+                    <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1">Current
+                        Password</label>
+                    <input type="password" id="current-password"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                    <input type="password" id="new-password"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        required>
+                    <div class="mt-2 text-xs text-gray-500">
+                        <p id="length" class="flex items-center"><span id="lengthIcon"
+                                class="inline-block w-4 h-4 mr-1 text-gray-400"><i class="fas fa-circle"></i></span> At
+                            least 8 characters</p>
+                        <p id="uppercase" class="flex items-center"><span id="uppercaseIcon"
+                                class="inline-block w-4 h-4 mr-1 text-gray-400"><i class="fas fa-circle"></i></span> At
+                            least 1 uppercase</p>
+                        <p id="number" class="flex items-center"><span id="numberIcon"
+                                class="inline-block w-4 h-4 mr-1 text-gray-400"><i class="fas fa-circle"></i></span> At
+                            least 1 number</p>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label for="confirm-new-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm New
+                        Password</label>
+                    <input type="password" id="confirm-new-password"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        required>
+                    <p id="passwordError" class="text-xs text-red-500 mt-1 hidden">Passwords do not match</p>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-password-change"
+                        class="px-4 py-2 mr-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700">Update
+                        Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">Edit Profile</h3>
+                <button id="close-profile-modal" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="edit-profile-form">
+                <div class="mb-4">
+                    <label for="full-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="full-name" value="Janice Doe"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label for="university" class="block text-sm font-medium text-gray-700 mb-1">University</label>
+                    <select id="university"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        <option>University of Technology</option>
+                        <option>State College</option>
+                        <option>Metropolitan University</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                    <textarea id="bio" rows="3"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500">Computer Science student interested in AI and web development</textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="cancel-profile-edit"
+                        class="px-4 py-2 mr-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700">Save
+                        Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-policy-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">Privacy Policy</h3>
+                <button id="close-privacy-policy-modal" class="text-gray-400 hover:text-gray-500" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-6 max-h-64 overflow-y-auto text-gray-700 text-sm space-y-4">
+                <p><strong>Effective Date:</strong> June 23, 2025</p>
+
+                <p>Welcome to our community platform. Your privacy is important to us. This Privacy Policy explains how
+                    we collect, use, and protect your personal information.</p>
+
+                <p><strong>1. Information We Collect</strong><br>
+                    - Account info: username, email, encrypted password<br>
+                    - Content you post: comments, likes/dislikes, uploads<br>
+                    - Technical data: IP address, browser/device info, site activity
+                </p>
+
+                <p><strong>2. How We Use Your Information</strong><br>
+                    - To provide and manage your account<br>
+                    - To enable community interaction and features<br>
+                    - For security, moderation, and legal compliance<br>
+                    - To improve our platform experience
+                </p>
+
+                <p><strong>3. Data Sharing</strong><br>
+                    We do not sell your data. We may share minimal info with trusted service providers for platform
+                    functionality or if legally required.
+                </p>
+
+                <p><strong>4. Data Retention</strong><br>
+                    We retain your data while your account is active. You may request deletion at any time.
+                </p>
+
+                <p><strong>5. Your Rights</strong><br>
+                    Depending on your location, you may have the right to access, correct, or delete your data, or
+                    withdraw consent.
+                </p>
+
+                <p><strong>6. Children's Privacy</strong><br>
+                    Our platform is not intended for children under 13 (or 16 in the EU). We do not knowingly collect
+                    data from minors.
+                </p>
+
+                <p><strong>7. Changes to This Policy</strong><br>
+                    We may update this policy. We will notify users of significant changes through the platform or
+                    email.
+                </p>
+
+                <p><strong>8. Contact Us</strong><br>
+                    For any questions, contact our support team at <a href="mailto:support@example.com"
+                        class="text-blue-500 underline">unicompanion002@gmail.com</a>.
+                </p>
+            </div>
+
+            <div class="flex justify-end">
+                <button id="confirm-privacy-policy"
+                    class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/function.js' %}"></script>
+    <script>
+
+        function deleteAccount(id) {
+            if (confirm("Are you sure you want to delete you account?")) {
+                // why create form? so people can't just link you loccalhost:8000/delete_acc/ then when you accidentally click it, ur acc gone
+                let form = document.createElement('form');
+                document.body.appendChild(form);
+                form.method = "POST";
+                form.action = "/delete_acc/";
+
+                // csrf token
+                let csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = "{{ csrf_token }}";
+                form.appendChild(csrfInput);
+
+                // user_id
+                let userIdInput = document.createElement('input');
+                userIdInput.type = 'hidden';
+                userIdInput.name = 'user_id';  // The name should match what your Django view expects
+                userIdInput.value = id;     // Replace with the actual data value
+                form.appendChild(userIdInput);
+
+                form.submit();
+            }
+        }
+
+        // Additional functionality for privacy & security page
+        document.addEventListener('DOMContentLoaded', function () {
+            // Save changes functionality
+            // const saveButton = document.querySelector('button[class*="bg-primary-600"]');
+            // if (saveButton) {
+            //     saveButton.addEventListener('click', function () {
+            //         // Show success message
+            //         const button = this;
+            //         const originalText = button.textContent;
+            //         button.textContent = 'Saved!';
+            //         button.classList.add('bg-green-600');
+            //         button.classList.remove('bg-primary-600');
+            //
+            //         setTimeout(() => {
+            //             button.textContent = originalText;
+            //             button.classList.remove('bg-green-600');
+            //             button.classList.add('bg-primary-600');
+            //         }, 2000);
+            //     });
+            // }
+
+            // Handle toggle switches
+            document.querySelectorAll('.toggle-switch input').forEach(toggle => {
+                toggle.addEventListener('change', function () {
+                    console.log('Toggle changed:', this.checked);
+                    // Add your toggle handling logic here
+                });
+            });
+
+            // Change password modal functionality
+            const passwordModal = document.getElementById('password-modal');
+            const changePasswordBtn = document.getElementById('change-password-btn');
+            const closePasswordModalBtn = document.getElementById('close-password-modal');
+            const cancelPasswordChangeBtn = document.getElementById('cancel-password-change');
+            const newPasswordInput = document.getElementById('new-password');
+            const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+
+            function showPasswordModal() {
+                if (passwordModal) passwordModal.classList.remove('hidden');
+            }
+
+            function hidePasswordModal() {
+                if (passwordModal) passwordModal.classList.add('hidden');
+            }
+
+            if (changePasswordBtn) changePasswordBtn.addEventListener('click', showPasswordModal);
+            if (closePasswordModalBtn) closePasswordModalBtn.addEventListener('click', hidePasswordModal);
+            if (cancelPasswordChangeBtn) cancelPasswordChangeBtn.addEventListener('click', hidePasswordModal);
+
+            // Password strength indicator
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', function () {
+                    const password = this.value;
+                    // Length check
+                    updateRequirement('length', password.length >= 8);
+                    // Uppercase check
+                    updateRequirement('uppercase', /[A-Z]/.test(password));
+                    // Number check
+                    updateRequirement('number', /\d/.test(password));
+                });
+            }
+
+            function updateRequirement(id, met) {
+                const iconEl = document.getElementById(id + 'Icon');
+                const textEl = document.getElementById(id);
+                if (iconEl && textEl) {
+                    if (met) {
+                        iconEl.innerHTML = '<i class="fas fa-check text-green-500"></i>';
+                        textEl.classList.add('text-green-500');
+                    } else {
+                        iconEl.innerHTML = '<i class="fas fa-circle"></i>';
+                        textEl.classList.remove('text-green-500');
+                    }
+                }
+            }
+
+            // Password match validation
+            if (confirmNewPasswordInput) {
+                const passwordError = document.getElementById('passwordError');
+                confirmNewPasswordInput.addEventListener('input', function () {
+                    if (this.value !== newPasswordInput.value) {
+                        if (passwordError) passwordError.classList.remove('hidden');
+                        this.classList.add('border-red-500');
+                    } else {
+                        if (passwordError) passwordError.classList.add('hidden');
+                        this.classList.remove('border-red-500');
+                    }
+                });
+            }
+
+            // Form submission
+            const changePasswordForm = document.getElementById('change-password-form');
+            if (changePasswordForm) {
+                changePasswordForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const newPasswordInput = document.getElementById('new-password');
+                    const confirmNewPasswordInput = document.getElementById('confirm-new-password');
+                    const currentPasswordInput = document.getElementById('current-password');
+                    const currentPassword = currentPasswordInput.value;
+                    const newPassword = newPasswordInput.value;
+                    const confirmNewPassword = confirmNewPasswordInput.value;
+
+                    // check if new pw is valid
+                    const isLengthValid = newPassword.length >= 8;
+                    const hasUppercase = /[A-Z]/.test(newPassword);
+                    const hasNumber = /\d/.test(newPassword);
+
+                    if (!isLengthValid || !hasUppercase || !hasNumber) {
+                        newPasswordInput.classList.add('border-red-500');
+                        console.log("pw not stronk enough")
+                        return;
+                    }
+                    newPasswordInput.classList.remove('border-red-500')
+
+                    // check if both is the same
+                    if (newPassword !== confirmNewPassword) {
+                        console.log("pw not match")
+                        return;
+                    }
+
+                    // check if current pw matches
+                    let result = fetch("{% url 'check_password' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `currentPass=${currentPassword}`
+                    })
+                        .then(response => response.json())
+                        .then(response => {
+                            return response.pass;
+                        })
+                    if (result) {
+                        currentPasswordInput.classList.remove('border-red-500');
+                    } else {
+                        currentPasswordInput.classList.add('border-red-500');
+                        return;
+                    }
+
+                    fetch("{% url 'edit_password' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `newPass=${newPassword}`
+                    })
+
+                    alert('Password updated successfully!');
+                    hidePasswordModal();
+                });
+            }
+
+            // Profile edit modal functionality
+            const profileModal = document.getElementById('profile-modal');
+            const editProfileBtns = document.querySelectorAll('[id^="edit-profile-"]');
+            const closeProfileModalBtn = document.getElementById('close-profile-modal');
+            const cancelProfileEditBtn = document.getElementById('cancel-profile-edit');
+
+            function showProfileModal() {
+                if (profileModal) profileModal.classList.remove('hidden');
+            }
+
+            function hideProfileModal() {
+                if (profileModal) profileModal.classList.add('hidden');
+            }
+
+            if (editProfileBtns) {
+                editProfileBtns.forEach(btn => {
+                    btn.addEventListener('click', showProfileModal);
+                });
+            }
+            if (closeProfileModalBtn) closeProfileModalBtn.addEventListener('click', hideProfileModal);
+            if (cancelProfileEditBtn) cancelProfileEditBtn.addEventListener('click', hideProfileModal);
+
+            // Profile form submission
+            const editProfileForm = document.getElementById('edit-profile-form');
+            if (editProfileForm) {
+                editProfileForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    alert('Profile updated successfully!');
+                    hideProfileModal();
+                });
+            }
+
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('change', function () {
+                    document.documentElement.classList.toggle('dark', this.checked);
+                    localStorage.setItem('darkMode', this.checked);
+                });
+
+                // Check for saved user preference
+                if (localStorage.getItem('darkMode') === 'true') {
+                    document.documentElement.classList.add('dark');
+                    darkModeToggle.checked = true;
+                }
+            }
+
+            // Edit Email Modal functionality
+            const editEmailModal = document.getElementById('edit-email-modal');
+            const editEmailBtn = document.getElementById('edit-email-btn');
+            const closeEditEmailModalBtn = document.getElementById('close-edit-email-modal');
+            const cancelEditEmailBtn = document.getElementById('cancel-edit-email');
+            const editEmailForm = document.getElementById('edit-email-form');
+            const editEmailInput = document.getElementById('edit-email-input');
+            const profileEmail = document.getElementById('profile-email');
+
+            function showEditEmailModal() {
+                if (editEmailModal && profileEmail) {
+                    editEmailInput.value = profileEmail.textContent.trim();
+                    editEmailModal.classList.remove('hidden');
+                }
+            }
+            function hideEditEmailModal() {
+                if (editEmailModal) editEmailModal.classList.add('hidden');
+            }
+            if (editEmailBtn) editEmailBtn.addEventListener('click', showEditEmailModal);
+            if (closeEditEmailModalBtn) closeEditEmailModalBtn.addEventListener('click', hideEditEmailModal);
+            if (cancelEditEmailBtn) cancelEditEmailBtn.addEventListener('click', hideEditEmailModal);
+            if (editEmailForm) {
+                editEmailForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    if (profileEmail && editEmailInput) {
+                        profileEmail.textContent = editEmailInput.value;
+                    }
+                    hideEditEmailModal();
+                });
+            }
+
+            // Privacy Policy Modal functionality
+            const privacyPolicyModal = document.getElementById('privacy-policy-modal');
+            const privacyPolicyBtn = document.getElementById('privacy-policy-btn');
+            const closePrivacyPolicyModalBtn = document.getElementById('close-privacy-policy-modal');
+            const confirmPrivacyPolicyBtn = document.getElementById('confirm-privacy-policy');
+
+            function showPrivacyPolicyModal() {
+                if (privacyPolicyModal) privacyPolicyModal.classList.remove('hidden');
+            }
+            function hidePrivacyPolicyModal() {
+                if (privacyPolicyModal) privacyPolicyModal.classList.add('hidden');
+            }
+            if (privacyPolicyBtn) privacyPolicyBtn.addEventListener('click', showPrivacyPolicyModal);
+            if (closePrivacyPolicyModalBtn) closePrivacyPolicyModalBtn.addEventListener('click', hidePrivacyPolicyModal);
+            if (confirmPrivacyPolicyBtn) confirmPrivacyPolicyBtn.addEventListener('click', hidePrivacyPolicyModal);
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,569 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Posts | UniCompanion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .category-tab.active {
+            border-bottom: 3px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .posts-container {
+            scroll-behavior: smooth;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+        }
+
+        .scroll-to-top:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .floating-action-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #3b82f6;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .floating-action-btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .category-tabs-container {
+            position: sticky;
+            top: 64px;
+            background: white;
+            z-index: 40;
+            padding-top: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body class="bg-gray-50">
+{% include  'includes/navBar.html' %}
+<!--    <header class="bg-white shadow-sm sticky top-0 z-50">-->
+<!--        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">-->
+<!--            <div class="flex justify-between items-center h-16">-->
+<!--                &lt;!&ndash; Layout with centered search bar &ndash;&gt;-->
+<!--                <div class="flex items-center justify-between w-full">-->
+<!--                    &lt;!&ndash; Left side - Logo &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 flex items-center">-->
+<!--                        <a href="/home"-->
+<!--                            class="text-primary-600 font-bold text-xl hover:text-primary-700 transition-colors">UniCompanion</a>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Center - Search &ndash;&gt;-->
+<!--                    <div class="flex-1 flex justify-center">-->
+<!--                        <div class="relative w-96">-->
+<!--                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">-->
+<!--                                <i class="fas fa-search text-gray-400"></i>-->
+<!--                            </div>-->
+<!--                            <input type="text" placeholder="Search"-->
+<!--                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Right side - Empty or for future elements &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 w-40">-->
+<!--                        &lt;!&ndash; Placeholder to balance the layout &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Updated Header with Menu and Notification Dropdowns &ndash;&gt;-->
+<!--                &lt;!&ndash; Right side - Icons and Profile &ndash;&gt;-->
+<!--                <div class="flex items-center space-x-4 relative">-->
+<!--                    &lt;!&ndash; Notification Bell &ndash;&gt;-->
+<!--                    &lt;!&ndash; Notification Bell &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="notification-btn-header"-->
+<!--                            class="p-1 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">-->
+<!--                            <i class="fas fa-bell text-xl"></i>-->
+<!--                            &lt;!&ndash; Notification indicator dot &ndash;&gt;-->
+<!--                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>-->
+<!--                        </button>-->
+<!--                        &lt;!&ndash; Notification Dropdown &ndash;&gt;-->
+<!--                        <div id="notification-dropdown-header" class="notification-dropdown">-->
+<!--                            <div class="p-4 border-b border-gray-200">-->
+<!--                                <h3 class="font-semibold text-gray-800">Notifications</h3>-->
+<!--                            </div>-->
+<!--                            <div class="notification-list">-->
+<!--                                &lt;!&ndash; Notification items here &ndash;&gt;-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-content">-->
+<!--                                        <p class="notification-text">No new notifications</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="p-3 text-center border-t border-gray-200">-->
+<!--                                <a href="/notification" class="text-sm text-primary-600 hover:text-primary-800">View-->
+<!--                                    all-->
+<!--                                    notifications</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; User Profile Button &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"-->
+<!--                            aria-label="User menu">-->
+<!--                            <div-->
+<!--                                class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-semibold">-->
+<!--                                JD</div>-->
+<!--                            <span class="text-sm font-medium text-gray-700">Janice</span>-->
+<!--                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>-->
+<!--                        </button>-->
+
+<!--                        &lt;!&ndash; Profile Dropdown Menu &ndash;&gt;-->
+<!--                        <div id="profile-dropdown" class="menu-dropdown">-->
+<!--                            <div class="py-2">-->
+<!--                                <a href="/app_settings" class="menu-item">-->
+<!--                                    <i class="fas fa-cog"></i>-->
+<!--                                    <span>App Settings</span>-->
+<!--                                </a>-->
+<!--                                <div class="menu-item">-->
+<!--                                    <i class="fas fa-moon"></i>-->
+<!--                                    <span>Dark Mode</span>-->
+<!--                                    <label class="switch">-->
+<!--                                        <input type="checkbox" id="theme-toggle">-->
+<!--                                        <span class="slider"></span>-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="menu-divider"></div>-->
+<!--                                <a href="/help_center" class="menu-item">-->
+<!--                                    <i class="fas fa-question-circle"></i>-->
+<!--                                    <span>Help Center</span>-->
+<!--                                </a>-->
+<!--                                <a href="/" class="menu-item">-->
+<!--                                    <i class="fas fa-sign-out-alt"></i>-->
+<!--                                    <span>Sign Out</span>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </header>-->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+<!--            &lt;!&ndash; Left Sidebar &ndash;&gt;-->
+<!--            <div class="w-full md:w-56 flex-shrink-0">-->
+<!--                <nav class="space-y-1">-->
+<!--                    <a href="/home" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-home mr-3 text-gray-600"></i>-->
+<!--                        Home-->
+<!--                    </a>-->
+<!--                    <a href="/calendar"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-calendar mr-3 text-gray-500"></i>-->
+<!--                        Events-->
+<!--                    </a>-->
+<!--                    <a href="/saved"-->
+<!--                        class="sidebar-item active flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-bookmark mr-3 text-primary-500"></i>-->
+<!--                        Saved-->
+<!--                    </a>-->
+<!--                    <a href="/profile"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-user mr-3 text-gray-600"></i>-->
+<!--                        Profile-->
+<!--                    </a>-->
+<!--                </nav>-->
+<!--            </div>-->
+
+            <!-- Main Content -->
+            <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <!-- Page Header -->
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Saved Posts</h1>
+                        <p class="text-gray-600">Your collection of helpful Q&A posts from the community</p>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="category-tabs-container">
+                    <div class="border-b border-gray-200 mb-6">
+                        <div class="flex space-x-8 overflow-x-auto pb-2 hide-scrollbar">
+                            <button class="category-tab pb-3 px-4 active" data-category="all">All Posts</button>
+                            <button class="category-tab pb-3 px-1" data-category="academics">Academics</button>
+                            <button class="category-tab pb-3 px-1" data-category="campus-life">Campus Life</button>
+                            <button class="category-tab pb-3 px-1" data-category="resources">Study Resources</button>
+                            <button class="category-tab pb-3 px-1" data-category="events">Events</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Posts Grid - Scrollable Container -->
+                <div class="posts-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20"
+                    id="postsContainer">
+                    <!-- Post Card 1 -->
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="academics">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span
+                                    class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Academics</span>
+                                <button class="text-gray-400 hover:text-primary-600">
+                                    <i class="fas fa-bookmark text-primary-600"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">How to prepare for Computer Science finals?</h3>
+                            <p class="text-gray-600 text-sm mb-4">Detailed guide covering algorithms, data structures,
+                                and past paper strategies...</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span>By Alex T.</span>
+                                <span>2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                            <div class="flex space-x-4">
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-thumbs-up mr-1"></i> 24
+                                </span>
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-comment mr-1"></i> 5
+                                </span>
+                            </div>
+                            <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Post Card 2 -->
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="resources">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span
+                                    class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Resources</span>
+                                <button class="text-gray-400 hover:text-primary-600">
+                                    <i class="fas fa-bookmark text-primary-600"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Best free resources for learning Python</h3>
+                            <p class="text-gray-600 text-sm mb-4">Curated list of free online courses, tutorials, and
+                                practice platforms for beginners...</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span>By Maria S.</span>
+                                <span>1 week ago</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                            <div class="flex space-x-4">
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-thumbs-up mr-1"></i> 42
+                                </span>
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-comment mr-1"></i> 8
+                                </span>
+                            </div>
+                            <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Post Card 3 -->
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="campus-life">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span
+                                    class="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">Campus
+                                    Life</span>
+                                <button class="text-gray-400 hover:text-primary-600">
+                                    <i class="fas fa-bookmark text-primary-600"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Balancing studies and social life</h3>
+                            <p class="text-gray-600 text-sm mb-4">Practical tips from seniors on managing your time
+                                between academics and extracurriculars...</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span>By Jordan P.</span>
+                                <span>3 weeks ago</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                            <div class="flex space-x-4">
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-thumbs-up mr-1"></i> 31
+                                </span>
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-comment mr-1"></i> 12
+                                </span>
+                            </div>
+                            <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Post Card 6 -->
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="academics">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span
+                                    class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Academics</span>
+                                <button class="text-gray-400 hover:text-primary-600">
+                                    <i class="fas fa-bookmark text-primary-600"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Effective note-taking strategies for lectures</h3>
+                            <p class="text-gray-600 text-sm mb-4">Different methods compared (Cornell, outlining, mind
+                                mapping) with examples...</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span>By Sam K.</span>
+                                <span>3 months ago</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                            <div class="flex space-x-4">
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-thumbs-up mr-1"></i> 63
+                                </span>
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-comment mr-1"></i> 11
+                                </span>
+                            </div>
+                            <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Additional posts to demonstrate scrolling -->
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="events">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <span
+                                    class="px-3 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">Events</span>
+                                <button class="text-gray-400 hover:text-primary-600">
+                                    <i class="fas fa-bookmark text-primary-600"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-lg font-semibold mb-2">Upcoming student organization fairs</h3>
+                            <p class="text-gray-600 text-sm mb-4">Calendar of all club fairs happening this semester
+                                with locations and times...</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <span>By Olivia W.</span>
+                                <span>4 months ago</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                            <div class="flex space-x-4">
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-thumbs-up mr-1"></i> 29
+                                </span>
+                                <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                    <i class="far fa-comment mr-1"></i> 7
+                                </span>
+                            </div>
+                            <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                        data-category="resources">
+                        <div class="post-card bg-white rounded-xl shadow-sm overflow-hidden transition duration-300"
+                            data-category="resources">
+                            <div class="p-5">
+                                <div class="flex justify-between items-start mb-3">
+                                    <span
+                                        class="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Study
+                                        Resources</span>
+                                    <button class="text-gray-400 hover:text-primary-600">
+                                        <i class="fas fa-bookmark text-primary-600"></i>
+                                    </button>
+                                </div>
+                                <h3 class="text-lg font-semibold mb-2">Free software for students</h3>
+                                <p class="text-gray-600 text-sm mb-4">Complete list of professional software available
+                                    for free with your student email...</p>
+                                <div class="flex items-center justify-between text-sm text-gray-500">
+                                    <span>By IT Services</span>
+                                    <span>6 months ago</span>
+                                </div>
+                            </div>
+                            <div class="border-t border-gray-100 px-5 py-3 bg-gray-50 flex justify-between">
+                                <div class="flex space-x-4">
+                                    <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                        <i class="far fa-thumbs-up mr-1"></i> 84
+                                    </span>
+                                    <span class="flex items-center text-gray-500 hover:text-primary-600 cursor-pointer">
+                                        <i class="far fa-comment mr-1"></i> 22
+                                    </span>
+                                </div>
+                                <button class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                    View Post
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scroll to Top Button -->
+                <div class="scroll-to-top" id="scrollToTop">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </main>
+
+            <script src="{% static 'js/function.js' %}"></script>
+            <script>
+                // Category tab functionality
+                const categoryTabs = document.querySelectorAll('.category-tab');
+                const postCards = document.querySelectorAll('.post-card');
+
+                categoryTabs.forEach(tab => {
+                    tab.addEventListener('click', function () {
+                        // Update active tab
+                        categoryTabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+
+                        // Filter posts
+                        const category = this.dataset.category;
+                        if (category === 'all') {
+                            postCards.forEach(card => card.style.display = 'block');
+                        } else {
+                            postCards.forEach(card => {
+                                if (card.dataset.category === category) {
+                                    card.style.display = 'block';
+                                } else {
+                                    card.style.display = 'none';
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Bookmark toggle functionality (would be more complex in a real app)
+                document.querySelectorAll('.post-card button').forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const icon = this.querySelector('i');
+                        if (icon.classList.contains('fa-bookmark')) {
+                            icon.classList.remove('fa-bookmark');
+                            icon.classList.add('far', 'fa-bookmark');
+                            icon.classList.remove('text-primary-600');
+                            // In a real app, you would also remove from saved posts
+                        } else {
+                            icon.classList.remove('far', 'fa-bookmark');
+                            icon.classList.add('fa-bookmark');
+                            icon.classList.add('text-primary-600');
+                        }
+                    });
+                });
+
+                // Post card click functionality
+                postCards.forEach(card => {
+                    card.addEventListener('click', function () {
+                        alert('Opening post details view');
+                        // In a real app, you would navigate to the post detail page
+                    });
+                });
+
+                // Scroll to top button
+                const scrollToTopBtn = document.getElementById('scrollToTop');
+
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 300) {
+                        scrollToTopBtn.classList.add('visible');
+                    } else {
+                        scrollToTopBtn.classList.remove('visible');
+                    }
+                });
+
+                scrollToTopBtn.addEventListener('click', () => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+
+                // Infinite scroll simulation (would be more complex in a real app with API calls)
+                window.addEventListener('scroll', () => {
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                        // In a real app, you would load more posts here
+                        console.log('Loading more posts...');
+                    }
+                });
+            </script>
+</body>
+
+</html>

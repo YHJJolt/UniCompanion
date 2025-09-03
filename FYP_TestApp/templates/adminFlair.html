@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/flairs.css' %}">
+</head>
+
+<body>
+    {% include 'includes/adminNav.html' %}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+           {% include 'includes/adminSideBar.html' %}
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <header class="content-header">
+                    <button class="sidebar-toggle hidden">
+                        <i class="toggle-icon fas fa-bars"></i>
+                    </button>
+
+                    <div class="header-title-container">
+                        <h2 class="header-title bg-white text-black dark:text-black">Flairs Management</h2>
+                    </div>
+                </header>
+
+                <!-- Flair Creation Form -->
+                <div class="card bg-white text-black dark:text-black">
+                    <h2 class="card-title bg-white text-black dark:text-black">Create New Flair</h2>
+                    <form id="flair-form" class="form-container" method="POST" action="{% url 'admin_add_flair' %}">
+                        {% csrf_token %}
+                        <div class="form-row two-columns">
+                            <div class="form-group">
+                                <label for="{{ flairForm.flair_name.id_for_label }}" class="form-label bg-white text-black dark:text-black">{{ flairForm.flair_name.label }}</label>
+<!--                                <input type="text" id="flair-name" name="flair-name" class="form-input">-->
+                                {{ flairForm.flair_name }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ flairForm.flair_color.id_for_label }}" class="form-label bg-white text-black dark:text-black">{{ flairForm.flair_color.label }}</label>
+<!--                                <select id="flair-color" name="flair-color" class="form-select">-->
+<!--                                    <option value="red">🔴 Red</option>-->
+<!--                                    <option value="orange">🟠 Orange</option>-->
+<!--                                    <option value="yellow">🟡 Yellow</option>-->
+<!--                                    <option value="green">🟢 Green</option>-->
+<!--                                    <option value="blue">🔵 Blue</option>-->
+<!--                                    <option value="purple">🟣 Purple</option>-->
+<!--                                </select>-->
+                                {{ flairForm.flair_color }}
+                            </div>
+                        </div>
+<!--                        <div class="form-row two-columns">-->
+<!--                            <div class="form-group">-->
+<!--                                <label for="flair-timestamp" class="form-label">Timestamp</label>-->
+<!--                                <input type="datetime-local" id="flair-timestamp" name="flair-timestamp"-->
+<!--                                    class="form-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="form-actions">
+<!--                            <input type="submit" id="publish-flair" class="btn btn-primary" value="Publish Flair">-->
+                            <button type="submit" id="publish-flair" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Publish Flair
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Flair Table -->
+                <div class="table-container bg-white text-black dark:text-black">
+                    <div class="card-header">
+                        <h2 class="card-title bg-white text-black dark:text-black">Existing Flairs</h2>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead class="table-header bg-white text-black dark:text-black">
+                                <tr>
+                                    <th class=bg-white text-black dark:text-black">Flair ID</th>
+                                    <th class="bg-white text-black dark:text-black">Flair Color</th>
+                                    <th class="bg-white text-black dark:text-black">Flair Name</th>
+                                    <th class="bg-white text-black dark:text-black">Timestamp</th>
+                                    <th class="bg-white text-black dark:text-black">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-body" id="flair-table-body">
+                                {% for flair in flairs %}
+                                <tr class="table-row bg-white text-black dark:text-black">
+                                    <td class="table-cell text-secondary bg-white text-black dark:text-black">{{ flair.flair_id }}</td>
+                                    <td class="table-cell">
+                                        <span class="inline-block w-5 h-5 rounded-full {{ flair.flair_color }}"></span>
+                                    </td>
+                                    <td class="table-cell text-primary bg-white text-black dark:text-black">{{ flair.flair_name }}</td>
+                                    <td class="table-cell text-secondary bg-white text-black dark:text-black">{{ flair.created_at }}</td>
+                                    <td class="table-cell">
+                                        <form method="POST" action="{% url 'admin_del_flair' %}?id={{ flair.flair_id }}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-danger delete-flair">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <script src="{% static 'js/admin-function.js' %}"></script>
+</body>
+
+</html>

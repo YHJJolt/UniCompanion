@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Calendar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{{ static('styles/design.css') }}">
+</head>
+
+<body class="bg-gray-50">
+{% include 'includes/navBar.html' %}
+{#    <header class="bg-white shadow-sm sticky top-0 z-50">#}
+{#        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">#}
+{#            <div class="flex justify-between items-center h-16">#}
+{#                <!-- Layout with centered search bar -->#}
+{#                <div class="flex items-center justify-between w-full">#}
+{#                    <!-- Left side - Logo -->#}
+{#                    <div class="flex-shrink-0 flex items-center">#}
+{#                        <a href="/home"#}
+{#                            class="text-primary-600 font-bold text-xl hover:text-primary-700 transition-colors">UniCompanion</a>#}
+{#                    </div>#}
+{##}
+{#                    <!-- Center - Search -->#}
+{#                    <div class="flex-1 flex justify-center">#}
+{#                        <div class="relative w-96">#}
+{#                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">#}
+{#                                <i class="fas fa-search text-gray-400"></i>#}
+{#                            </div>#}
+{#                            <input type="text" placeholder="Search"#}
+{#                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">#}
+{#                        </div>#}
+{#                    </div>#}
+{##}
+{#                    <!-- Right side - Empty or for future elements -->#}
+{#                    <div class="flex-shrink-0 w-40">#}
+{#                        <!-- Placeholder to balance the layout -->#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#                <!-- Updated Header with Menu and Notification Dropdowns -->#}
+{#                <!-- Right side - Icons and Profile -->#}
+{#                <div class="flex items-center space-x-4 relative">#}
+{#                    <!-- Notification Bell -->#}
+{#                    <div class="relative">#}
+{#                        <button id="notification-btn-header"#}
+{#                            class="p-1 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">#}
+{#                            <i class="fas fa-bell text-xl"></i>#}
+{#                            <!-- Notification indicator dot -->#}
+{#                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>#}
+{#                        </button>#}
+{#                        <!-- Notification Dropdown -->#}
+{#                        <div id="notification-dropdown-header" class="notification-dropdown">#}
+{#                            <div class="p-4 border-b border-gray-200">#}
+{#                                <h3 class="font-semibold text-gray-800">Notifications</h3>#}
+{#                            </div>#}
+{#                            <div class="notification-list">#}
+{#                                <!-- Notification items here -->#}
+{#                                <div class="notification-item">#}
+{#                                    <div class="notification-content">#}
+{#                                        <p class="notification-text">No new notifications</p>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="p-3 text-center border-t border-gray-200">#}
+{#                                <a href="/notification" class="text-sm text-primary-600 hover:text-primary-800">View#}
+{#                                    all#}
+{#                                    notifications</a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                    <!-- User Profile Button -->#}
+{#                    <div class="relative">#}
+{#                        <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"#}
+{#                            aria-label="User menu">#}
+{#                            <div#}
+{#                                class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-semibold">#}
+{#                                JD</div>#}
+{#                            <span class="text-sm font-medium text-gray-700">Janice</span>#}
+{#                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>#}
+{#                        </button>#}
+{##}
+{#                        <!-- Profile Dropdown Menu -->#}
+{#                        <div id="profile-dropdown" class="menu-dropdown">#}
+{#                            <div class="py-2">#}
+{#                                <a href="/app_settings" class="menu-item">#}
+{#                                    <i class="fas fa-cog"></i>#}
+{#                                    <span>App Settings</span>#}
+{#                                </a>#}
+{#                                <div class="menu-item">#}
+{#                                    <i class="fas fa-moon"></i>#}
+{#                                    <span>Dark Mode</span>#}
+{#                                    <label class="switch">#}
+{#                                        <input type="checkbox" id="theme-toggle">#}
+{#                                        <span class="slider"></span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <div class="menu-divider"></div>#}
+{#                                <a href="/help_center" class="menu-item">#}
+{#                                    <i class="fas fa-question-circle"></i>#}
+{#                                    <span>Help Center</span>#}
+{#                                </a>#}
+{#                                <a href="/" class="menu-item">#}
+{#                                    <i class="fas fa-sign-out-alt"></i>#}
+{#                                    <span>Sign Out</span>#}
+{#                                </a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </header>#}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+{#            <!-- Left Sidebar -->#}
+{#            <div class="w-full md:w-56 flex-shrink-0">#}
+{#                <nav class="space-y-1">#}
+{#                    <a href="/home" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">#}
+{#                        <i class="fas fa-home mr-3 text-gray-500"></i>#}
+{#                        Home#}
+{#                    </a>#}
+{#                    <a href="/calendar"#}
+{#                        class="sidebar-item active flex items-center px-4 py-3 text-sm font-medium rounded-md">#}
+{#                        <i class="fas fa-calendar mr-3 text-primary-600"></i>#}
+{#                        Events#}
+{#                    </a>#}
+{#                    <a href="/saved"#}
+{#                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">#}
+{#                        <i class="fas fa-bookmark mr-3 text-gray-500"></i>#}
+{#                        Saved#}
+{#                    </a>#}
+{#                    <a href="/profile"#}
+{#                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">#}
+{#                        <i class="fas fa-user mr-3 text-gray-600"></i>#}
+{#                        Profile#}
+{#                    </a>#}
+{#                </nav>#}
+{#            </div>#}
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <!-- Calendar Header -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-800" id="current-month-year">August 2023</h2>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <!-- Calendar Button with Month/Year Picker -->
+                            <div class="relative">
+                                <!-- Calendar Button -->
+                                <button id="calendar-button"
+                                    class="p-2 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    aria-label="Open date picker">
+                                    <i class="fas fa-calendar text-xl"></i>
+                                </button>
+
+                                <!-- Month/Year Picker Dropdown (Hidden by Default) -->
+                                <div id="month-year-picker"
+                                    class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg p-4 w-64 z-20 hidden">
+                                    <!-- Year Selection -->
+                                    <div class="mb-4">
+                                        <label for="year-select"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                        <div class="relative">
+                                            <select id="year-select"
+                                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md"
+                                                aria-label="Select year">
+                                                <!-- Years will be populated by JavaScript -->
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Month Selection -->
+                                    <div class="mb-4">
+                                        <label for="month-select"
+                                            class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                                        <div class="relative">
+                                            <select id="month-select"
+                                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md"
+                                                aria-label="Select month">
+                                                <option value="0">January</option>
+                                                <option value="1">February</option>
+                                                <option value="2">March</option>
+                                                <option value="3">April</option>
+                                                <option value="4">May</option>
+                                                <option value="5">June</option>
+                                                <option value="6">July</option>
+                                                <option value="7">August</option>
+                                                <option value="8">September</option>
+                                                <option value="9">October</option>
+                                                <option value="10">November</option>
+                                                <option value="11">December</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Apply Button -->
+                                    <button id="apply-date"
+                                        class="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        aria-label="Apply selected date">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button id="create-event-btn"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-primary-600 text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                aria-label="Create new event">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Days of Week -->
+                    <div class="grid grid-cols-7 gap-1 mb-2">
+                        <div class="text-center font-medium text-gray-500 py-2">Sun</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Mon</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Tue</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Wed</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Thu</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Fri</div>
+                        <div class="text-center font-medium text-gray-500 py-2">Sat</div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="grid grid-cols-7 gap-1 border border-gray-200 rounded-lg overflow-hidden">
+<!--                        <div class="calendar-day bg-gray-50 border border-gray-200">-->
+<!--                            <div class="calendar-day-number"></div>-->
+<!--                        </div>-->
+
+<!--                        <div class="calendar-day bg-white border border-gray-200">-->
+<!--                            <div class="calendar-day-number">1</div>-->
+<!--                            <div class="day-event bg-blue-100 text-blue-800">Study Group</div>-->
+<!--                        </div>-->
+
+                        {% for i in range(35) %}
+                            {% if i < first_day or i >= first_day+days_in_month %}
+                        <div class="calendar-day bg-gray-50 border border-gray-200">
+                            <div class="calendar-day-number"></div>
+                        </div>
+                            {% else %}
+                        <div class="calendar-day bg-white border border-gray-200">
+                            <div class="calendar-day-number">{{ i - first_day + 1 }}</div>
+                                {% for event in events %}
+                                    {% if (i - first_day + 1) == event.start_time|date('d') | int %}
+                                        <div class="day-event bg-{{ event.color }}-100 text-{{ event.color }}-800">{{ event.title }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                        </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Events List -->
+                    <div class="mt-8">
+                        <div class="flex items-center mb-4">
+                            <div class="h-6 w-1 bg-primary-600 rounded-full mr-4"></div>
+                            <h3 class="text-lg font-semibold text-gray-800">Upcoming Events</h3>
+                        </div>
+                        <div class="events-list space-y-4">
+                            <!-- Event 1 -->
+                            {% for event in events %}
+                            <div class="event-item bg-white p-4 rounded-lg shadow-sm border-l-4 border-{{ event.color }}-500 relative">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="text-sm text-gray-500">{{ event.start_time|date("d M Y") }}</div>
+                                        <div class="text-sm text-gray-500">{{ event.start_time|date("g:i A") }} - {{ event.end_time|date("g:i A") }}</div>
+                                        <h4 class="font-medium text-gray-800"><b>{{  event.title }}</b></h4>
+                                        <p class="text-sm text-gray-600 mt-1">Location: {{ event.location }} <br> Description:<br>{{ event.description|linebreaksbr }}</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span
+                                            class="text-xs px-2 py-1 rounded-full bg-{{ event.color }}-100 text-{{ event.color }}-800">Academic</span>
+                                        <button class="text-gray-400 hover:text-gray-600 focus:outline-none relative">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 5v.01M12 12v.01M12 19v.01"></path>
+                                            </svg>
+
+                                            <!-- Dropdown menu (hidden by default) -->
+                                            <div class="absolute right-0 mt-2 w-38 bg-white rounded-md shadow-lg py-1 z-10 hidden">
+                                                {% if request.GET.month and request.GET.year %}
+                                                    <a href="{{ url('edit_event') }}?id={{ event.event_id }}&month={{ request.GET.month }}&year={{ request.GET.year }}" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                                                    <a href="{{ url('delete_event') }}?id={{ event.event_id }}&month={{ request.GET.month }}&year={{ request.GET.year }}" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+                                                {% else %}
+                                                    <a data-id="{{ event.event_id }}" class="event-edit block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                                                    <a href="{{ url('delete_event') }}?id={{ event.event_id }}" class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+                                                {% endif %}
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+{#                            <!-- Event 2 -->#}
+{#                            <div class="event-item bg-white p-4 rounded-lg shadow-sm border-l-4 border-purple-500">#}
+{#                                <div class="flex justify-between items-start">#}
+{#                                    <div>#}
+{#                                        <div class="text-sm text-gray-500">4:00 PM - 5:00 PM</div>#}
+{#                                        <h4 class="font-medium text-gray-800">Assignment Due</h4>#}
+{#                                        <p class="text-sm text-gray-600 mt-1">Submit Computer Science project before#}
+{#                                            deadline</p>#}
+{#                                    </div>#}
+{#                                    <div class="flex items-center space-x-2">#}
+{#                                        <span#}
+{#                                            class="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">Assignment</span>#}
+{#                                        <button class="text-gray-400 hover:text-gray-600 focus:outline-none relative">#}
+{#                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"#}
+{#                                                viewBox="0 0 24 24" stroke="currentColor">#}
+{#                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"#}
+{#                                                    d="M12 5v.01M12 12v.01M12 19v.01" />#}
+{#                                            </svg>#}
+{#                                            <!-- Dropdown menu (hidden by default) -->#}
+{#                                            <div#}
+{#                                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden">#}
+{#                                                <a href="#"#}
+{#                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>#}
+{#                                                <a href="#"#}
+{#                                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>#}
+{#                                            </div>#}
+{#                                        </button>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div class="event-modal" id="event-modal">
+        <div class="event-modal-content shadow-xl">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Create New Event</h3>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="event-form" method="POST" action="{{  url("add_event") }}">
+
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div>
+                            <label for="{{ eventForm.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.category.label }}</label>
+                            {{ eventForm.category }}
+                        </div>
+
+                            <div>
+                                <label for="{{ eventForm.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.title.label }}</label>
+{#                              <input type="text"#}
+{#                                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"#}
+                                {{ eventForm.title }}
+                            </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="{{ eventForm.date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.date.label }}</label>
+{#                                <input type="date"#}
+{#                                    class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">#}
+                                {{ eventForm.date }}
+                            </div>
+
+                            <div>
+                                <label for="{{ eventForm.start_time.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.start_time.label }}</label>
+{#                                <input type="time"#}
+{#                                    class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">#}
+                                {{ eventForm.start_time }}
+                            </div>
+                            <div>
+                                <label for="{{ eventForm.end_time.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.end_time.label }}</label>
+{#                                <input type="time"#}
+{#                                    class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">#}
+                                {{ eventForm.end_time}}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="{{ eventForm.location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.location.label }}</label>
+{#                            <input type="text"#}
+{#                                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"#}
+{#                                placeholder="Where is the event?">#}
+                            {{ eventForm.location }}
+                        </div>
+
+                        <div>
+                            <label for="{{ eventForm.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.description.label }}</label>
+{#                            <textarea rows="3"#}
+{#                                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"#}
+{#                                placeholder="Add details about your event"></textarea>#}
+                            {{ eventForm.description }}
+                        </div>
+
+                        <div>
+                            <label for="{{ eventForm.color.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ eventForm.color.label }}</label>
+                            <div class="flex space-x-3" id="color-options">
+                                {% for value, label in eventForm.color_Choices %}
+                                    <div class="color-option {{ value }} {% if eventForm.initial.color == value %}selected{% endif %}"
+                                         data-value="{{ value }}"
+                                         style="width: 20px; height: 20px; border-radius: 50%; cursor: pointer;"></div>
+                                {% endfor %}
+                            </div>
+                            {{ eventForm.color }}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" id="cancel-event"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 foul-button">
+                            Create Event
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ static('js/function.js') }}"></script>
+    <script>
+        // Modal elements
+        const modal = document.getElementById('event-modal');
+        const createBtn = document.getElementById('create-event-btn');
+        const closeBtn = document.getElementById('close-modal');
+        const cancelBtn = document.getElementById('cancel-event');
+        const eventForm = document.getElementById('event-form');
+
+        // Open modal
+        createBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            eventForm.action = "{{ url('add_event') }}";
+            eventForm.value = "Create Event";
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Color selection logic
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                colorOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+
+        // Edit Form Submission
+        const editForm = document.querySelectorAll('.event-edit')
+        editForm.forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const djangoEvents = {{ events_json|safe }};
+                const eventId = btn.dataset.id;
+                let eventData = '';
+                for (const event of djangoEvents) {
+                    if (event.pk == eventId) {
+                        eventData = event;
+                    }
+                }
+                console.log(djangoEvents);
+                console.log(eventId);
+                console.log(eventData);
+                if (!eventData) return;
+
+                const fields = eventData.fields;
+
+                // Open modal
+                modal.style.display = 'flex';
+
+                // Set form action
+                const urlParams = new URLSearchParams(window.location.search);
+                let actionUrl = `/edit_event/?id=${btn.dataset.id}`;
+                if (urlParams.has('month') && urlParams.has('year')) {
+                    const month = urlParams.get('month');
+                    const year = urlParams.get('year');
+                    actionUrl += `&month=${month}&year=${year}`;
+                }
+                eventForm.action = actionUrl;
+
+                // Fill form fields
+                eventForm.querySelector('[name="title"]').value = fields.title;
+                eventForm.querySelector('[name="date"]').value = fields.start_time.split(' ')[0];
+                eventForm.querySelector('[name="start_time"]').value = fields.start_time.split(' ')[1].slice(0, 5);
+                eventForm.querySelector('[name="end_time"]').value = fields.end_time.split(' ')[1].slice(0, 5);
+                eventForm.querySelector('[name="location"]').value = fields.location;
+                eventForm.querySelector('[name="description"]').value = fields.description;
+                eventForm.querySelector('[name="category"]').value = fields.category;
+                eventForm.querySelector('[name="color"]').value = fields.color;
+
+                // Update modal header and submit button
+                document.querySelector('#event-modal h3').textContent = 'Edit Event';
+                eventForm.querySelector('button[type="submit"]').textContent = 'Update Event';
+
+                // Select color circle visually
+                colorOptions.forEach(opt => {
+                    opt.classList.toggle('selected', opt.dataset.value === btn.dataset.color);
+                });
+            });
+         });
+
+        // Form submission
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Get form values
+            const category = eventForm.querySelector('select').value;
+            const title = eventForm.querySelector('input[type="text"]').value;
+            const date = eventForm.querySelector('input[type="date"]').value;
+            const time = eventForm.querySelector('input[type="time"]').value;
+            const location = eventForm.querySelector('input[placeholder="Where is the event?"]').value;
+            const description = eventForm.querySelector('textarea').value;
+            const colorDiv = eventForm.querySelector('.color-option.selected');
+
+
+            let borderColor = 'border-blue-500';
+            if (colorDiv) {
+                const color = colorDiv.className.match(/bg-([a-z]+)-500/);
+                document.getElementById("eventColor").value = color[0]
+                if (color && color[1]) borderColor = `border-${color[1]}-500`;
+            }
+
+            // Create event element
+            const eventList = document.querySelector('.events-list');
+            const eventDiv = document.createElement('div');
+            eventDiv.className = `event-item bg-white p-4 rounded-lg shadow-sm border-l-4 ${borderColor}`;
+            eventDiv.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-sm text-gray-500">${date ? date : ''}${date && time ? ' ' : ''}${time ? time : ''}</div>
+                        <h4 class="font-medium text-gray-800">${title}</h4>
+                        <p class="text-sm text-gray-600 mt-1">${location ? location + ' - ' : ''}${description}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">${category}</span>
+                    </div>
+                </div>
+            `;
+            eventList.appendChild(eventDiv);
+            modal.style.display = 'none';
+            eventForm.submit();
+            {#eventForm.reset();#}
+            {#window.location.href = "/calendar";#}
+        });
+
+        // Update current month/year display
+        const currentDate = new Date();
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        const url = new URL(window.location);
+        if (url.searchParams.size === 0) {
+            document.getElementById('current-month-year').textContent =
+                `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+        } else {
+            let month = url.searchParams.get("month") - 1;
+            let year = url.searchParams.get("year");
+            document.getElementById('current-month-year').textContent =
+                `${monthNames[month]} ${year}`;
+        }
+
+
+        // Date picker elements
+        const calendarButton = document.getElementById('calendar-button');
+        const monthYearPicker = document.getElementById('month-year-picker');
+        const yearSelect = document.getElementById('year-select');
+        const monthSelect = document.getElementById('month-select');
+        const applyButton = document.getElementById('apply-date');
+
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+
+        // Populate year options (range: -10 to +10 from current year)
+        for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            if (year === currentYear) {
+                option.selected = true;
+            }
+            yearSelect.appendChild(option);
+        }
+
+        // Set current month
+        monthSelect.value = currentMonth;
+
+        // FIXED: Toggle picker visibility with stopPropagation to prevent conflicts
+        calendarButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // This prevents the event from bubbling up
+            monthYearPicker.classList.toggle('hidden');
+        });
+
+        // Close picker when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!monthYearPicker.contains(event.target) && event.target !== calendarButton) {
+                monthYearPicker.classList.add('hidden');
+            }
+        });
+
+        // Apply selected date
+        applyButton.addEventListener('click', () => {
+            const selectedYear = yearSelect.value;
+            const selectedMonth = monthSelect.value;
+            const selectedDate = new Date(selectedYear, selectedMonth, 1);
+
+            // Update the main calendar display with the selected month/year
+            {#document.getElementById('current-month-year').textContent =#}
+            {#    `${monthNames[selectedMonth]} ${selectedYear}`;#}
+
+            let urlSelectedMonth = +selectedMonth + 1;
+            window.location.href = `/calendar?month=${urlSelectedMonth}&year=${selectedYear}`;
+
+            monthYearPicker.classList.add('hidden');
+        });
+
+        //3 bullet point
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all kebab menu buttons
+            const menuButtons = document.querySelectorAll('.event-item button');
+
+            menuButtons.forEach(button => {
+                const menu = button.querySelector('div');
+
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    // Close all other open menus
+                    document.querySelectorAll('.event-item div.absolute').forEach(m => {
+                        if (m !== menu) m.classList.add('hidden');
+                    });
+                    // Toggle current menu
+                    menu.classList.toggle('hidden');
+                });
+            });
+
+            // Close menus when clicking elsewhere
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.event-item div.absolute').forEach(menu => {
+                    menu.classList.add('hidden');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

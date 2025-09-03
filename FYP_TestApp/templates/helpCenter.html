@@ -1,0 +1,346 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Help Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body class="bg-gray-50">
+{% include  'includes/navBar.html' %}
+<!--    <header class="bg-white shadow-sm sticky top-0 z-50">-->
+<!--        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">-->
+<!--            <div class="flex justify-between items-center h-16">-->
+<!--                &lt;!&ndash; Layout with centered search bar &ndash;&gt;-->
+<!--                <div class="flex items-center justify-between w-full">-->
+<!--                    &lt;!&ndash; Left side - Logo &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 flex items-center">-->
+<!--                        <a href="/home"-->
+<!--                            class="text-primary-600 font-bold text-xl hover:text-primary-700 transition-colors">UniCompanion</a>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Center - Search &ndash;&gt;-->
+<!--                    <div class="flex-1 flex justify-center">-->
+<!--                        <div class="relative w-96">-->
+<!--                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">-->
+<!--                                <i class="fas fa-search text-gray-400"></i>-->
+<!--                            </div>-->
+<!--                            <input type="text" placeholder="Search"-->
+<!--                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Right side - Empty or for future elements &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 w-40">-->
+<!--                        &lt;!&ndash; Placeholder to balance the layout &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Updated Header with Menu and Notification Dropdowns &ndash;&gt;-->
+<!--                &lt;!&ndash; Right side - Icons and Profile &ndash;&gt;-->
+<!--                <div class="flex items-center space-x-4 relative">-->
+<!--                    &lt;!&ndash; Notification Bell &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="notification-btn-header"-->
+<!--                            class="p-1 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">-->
+<!--                            <i class="fas fa-bell text-xl"></i>-->
+<!--                            &lt;!&ndash; Notification indicator dot &ndash;&gt;-->
+<!--                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>-->
+<!--                        </button>-->
+<!--                        &lt;!&ndash; Notification Dropdown &ndash;&gt;-->
+<!--                        <div id="notification-dropdown-header" class="notification-dropdown">-->
+<!--                            <div class="p-4 border-b border-gray-200">-->
+<!--                                <h3 class="font-semibold text-gray-800">Notifications</h3>-->
+<!--                            </div>-->
+<!--                            <div class="notification-list">-->
+<!--                                &lt;!&ndash; Notification items here &ndash;&gt;-->
+<!--                                <div class="notification-item">-->
+<!--                                    <div class="notification-content">-->
+<!--                                        <p class="notification-text">No new notifications</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="p-3 text-center border-t border-gray-200">-->
+<!--                                <a href="/notification" class="text-sm text-primary-600 hover:text-primary-800">View-->
+<!--                                    all-->
+<!--                                    notifications</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; User Profile Button &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"-->
+<!--                            aria-label="User menu">-->
+<!--                            <div-->
+<!--                                class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-semibold">-->
+<!--                                JD</div>-->
+<!--                            <span class="text-sm font-medium text-gray-700">Janice</span>-->
+<!--                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>-->
+<!--                        </button>-->
+
+<!--                        &lt;!&ndash; Profile Dropdown Menu &ndash;&gt;-->
+<!--                        <div id="profile-dropdown" class="menu-dropdown">-->
+<!--                            <div class="py-2">-->
+<!--                                <a href="/app_settings" class="menu-item">-->
+<!--                                    <i class="fas fa-cog"></i>-->
+<!--                                    <span>App Settings</span>-->
+<!--                                </a>-->
+<!--                                <div class="menu-item">-->
+<!--                                    <i class="fas fa-moon"></i>-->
+<!--                                    <span>Dark Mode</span>-->
+<!--                                    <label class="switch">-->
+<!--                                        <input type="checkbox" id="theme-toggle">-->
+<!--                                        <span class="slider"></span>-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="menu-divider"></div>-->
+<!--                                <a href="/help_center" class="menu-item">-->
+<!--                                    <i class="fas fa-question-circle"></i>-->
+<!--                                    <span>Help Center</span>-->
+<!--                                </a>-->
+<!--                                <a href="/" class="menu-item">-->
+<!--                                    <i class="fas fa-sign-out-alt"></i>-->
+<!--                                    <span>Sign Out</span>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </header>-->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+<!--            &lt;!&ndash; Left Sidebar &ndash;&gt;-->
+<!--            <div class="w-full md:w-56 flex-shrink-0">-->
+<!--                <nav class="space-y-1">-->
+<!--                    <a href="/home" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-home mr-3 text-gray-500"></i>-->
+<!--                        Home-->
+<!--                    </a>-->
+<!--                    <a href="/calendar"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-calendar mr-3 text-gray-500"></i>-->
+<!--                        Events-->
+<!--                    </a>-->
+<!--                    <a href="/saved"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-bookmark mr-3 text-gray-500"></i>-->
+<!--                        Saved-->
+<!--                    </a>-->
+<!--                    <a href="/profile"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-user mr-3 text-gray-500"></i>-->
+<!--                        Profile-->
+<!--                    </a>-->
+<!--                </nav>-->
+<!--            </div>-->
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                    <h1 class="text-2xl font-bold text-gray-800">Help Center</h1>
+                    <p class="text-gray-600">Click a question below to view the answer.</p>
+
+                    <!-- Account & Profile -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">🧾 Account & Profile</h2>
+                        <div class="space-y-4">
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How do I create an account?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Click the "Sign Up" button at the top-right corner and follow the instructions to
+                                    register using your email.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How can I change my profile picture or username?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Go to your account settings and update your profile image or display name under the
+                                    "Edit Profile" section.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How do I delete my account?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Navigate to your account settings and click "Delete Account" at the bottom. This
+                                    action is permanent.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Posting & Comments -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">💬 Posting & Comments</h2>
+                        <div class="space-y-4">
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How do I post a new comment or reply?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Use the comment box under any post or discussion. Press enter or click "Post" to
+                                    submit your comment.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    What are reputation points and how do I earn them?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Reputation points are earned when other users upvote your comments. Higher
+                                    reputation unlocks community privileges.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    Why was my comment removed?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Comments may be removed for violating community guidelines (e.g. spam, abuse, or
+                                    off-topic content). Check our rules page for details.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Moderation & Safety -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">⚠️ Moderation & Safety</h2>
+                        <div class="space-y-4">
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How do I report abusive content?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Click the three-dot menu next to any post or comment and select "Report". Provide a
+                                    reason, and our team will review it.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    What happens if I break community rules?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Depending on the violation, you may receive a warning, temporary suspension, or
+                                    permanent ban.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How are moderators chosen?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Moderators are selected based on reputation, activity, and behavior in the
+                                    community. Admins may also appoint trusted users.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact & Support -->
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-700 mb-2">📩 Contact & Support</h2>
+                        <div class="space-y-4">
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How can I contact support?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Reach us at <a href="mailto:support@example.com"
+                                        class="text-blue-500 underline">support@example.com</a> or use the in-app help
+                                    form.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    Where can I suggest a new feature?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Visit the "Feature Requests" forum or email us directly. We review all suggestions
+                                    regularly.
+                                </div>
+                            </div>
+
+                            <div x-data="{ open: false }" class="border-b pb-2">
+                                <button @click="open = !open"
+                                    class="text-left w-full text-sm text-blue-600 hover:underline font-medium">
+                                    How do I report a bug?
+                                </button>
+                                <div x-show="open" x-transition class="mt-2 text-sm text-gray-600">
+                                    Use the "Bug Report" section in the Help menu, or email us a description and steps
+                                    to reproduce it.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-sm text-gray-500 pt-4">
+                        Can't find what you're looking for? Contact us at <a href=" "
+                            class="text-blue-500 underline">unicompanion002@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Include Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="{% static 'js/function.js' %}"></script>
+</body>
+
+</html>

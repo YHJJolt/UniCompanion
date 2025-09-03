@@ -1,0 +1,51 @@
+<header class="admin-header bg-white text-black dark:text-black">
+    <div class="header-container">
+        <div class="header-content">
+            <!-- Left side - Logo -->
+            <div class="logo-container">
+                <a href="{% url 'admin_dashboard' %}" class="logo">UniCompanion (Admin Panel)</a>
+            </div>
+
+            <!-- Updated Header with Menu and Notification Dropdowns -->
+            <div class="flex items-center space-x-4 relative">
+                <div class="relative">
+                    <!-- User Profile Button -->
+                    <div class="relative">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"
+                            aria-label="User menu">
+                            <img src="/media/{{ user.image }}" class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-semibold">
+
+                            <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                        </button>
+
+                        <!-- Profile Dropdown Menu -->
+                        <div id="profile-dropdown" class="menu-dropdown">
+                            <div class="py-2">
+                                <a href="{% url 'home' %}" class="menu-item">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span>Back to home</span>
+                                </a>
+                            </div>
+                            <div class="menu-item">
+                                <i class="fas fa-moon"></i>
+                                <span>Dark Mode</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="theme-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="menu-divider"></div>
+                            <div class="py-2">
+                                <a href="{% url 'logout' %}" class="menu-item">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Sign Out</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

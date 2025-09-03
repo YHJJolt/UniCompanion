@@ -1,0 +1,420 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/editChatQues.css' %}">
+</head>
+
+<body>
+    {% include 'includes/adminNav.html' %}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include 'includes/adminSideBar.html' %}
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <header class="content-header bg-white text-black dark:text-black">
+                    <button class="sidebar-toggle hidden">
+                        <i class="toggle-icon fas fa-bars"></i>
+                    </button>
+
+                    <div class="header-title-container">
+                        <h1 class="header-title bg-white text-black dark:text-black">FAQ Chatbot Manager</h1>
+                    </div>
+                </header>
+
+<!--                &lt;!&ndash; FAQ Modal &ndash;&gt;-->
+<!--                <div id="faqModal"-->
+<!--                    class="modal hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">-->
+<!--                    <div-->
+<!--                        class="modal-content relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 shadow-lg rounded-md bg-white">-->
+<!--                        <div class="flex justify-between items-center mb-4">-->
+<!--                            <h3 id="modalTitle" class="text-lg font-semibold">Add New FAQ</h3>-->
+<!--                            <button id="closeModal" class="text-gray-500 hover:text-gray-700">-->
+<!--                                <i class="fas fa-times"></i>-->
+<!--                            </button>-->
+<!--                        </div>-->
+<!--                        &lt;!&ndash; The form content is already in your HTML &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <!-- FAQ Creation Form -->
+                <div class="card bg-white text-black dark:text-black">
+                    <h2 class="card-title bg-white text-black dark:text-black">Add New FAQ</h2>
+                    <form id="faqForm" method="POST" action="{% url 'admin_faq_add' %}">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            <!-- Category -->
+                            <div>
+                                <label for="{{ AddFaqForm.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ AddFaqForm.category.label }}</label>
+<!--                                <select id="faqCategory" required-->
+<!--                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">-->
+<!--                                    <option value="">Select Category</option>-->
+<!--                                    <option value="admissions">Admissions & Entry Requirements</option>-->
+<!--                                    <option value="campus">Campus Facilities & Services</option>-->
+<!--                                    <option value="scholarships">Scholarships & Financial Aid</option>-->
+<!--                                    <option value="library">Library & Academic Support</option>-->
+<!--                                </select>-->
+                                {{ AddFaqForm.category }}
+                            </div>
+
+                            <!-- Question -->
+                            <div>
+                                <label for="{{ AddFaqForm.question.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ AddFaqForm.question.label }}
+                                    </label>
+<!--                                <textarea id="faqQuestion" required rows="3"-->
+<!--                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"-->
+<!--                                    placeholder="Enter the question..."></textarea>-->
+                                {{ AddFaqForm.question }}
+                            </div>
+
+                            <!-- Answer -->
+                            <div>
+                                <label for="{{ AddFaqForm.answer.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ AddFaqForm.answer.label }}
+                                    </label>
+<!--                                <textarea id="faqAnswer" required rows="4"-->
+<!--                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"-->
+<!--                                    placeholder="Enter the answer..."></textarea>-->
+                                {{ AddFaqForm.answer }}
+                            </div>
+
+                            <!-- Keyword -->
+                            <div>
+                                <label for="{{ AddFAQForm.keywords.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">{{ AddFaqForm.keywords.label }}</label>
+<!--                                <textarea id="faqKeyword" required rows="3"-->
+<!--                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"-->
+<!--                                    placeholder="help, faq, menu, help me, etc..."></textarea>-->
+                                {{ AddFaqForm.keywords }}
+                            </div>
+
+<!--                            &lt;!&ndash; Tags &ndash;&gt;-->
+<!--                            <div style="display: none;">-->
+<!--                                <label for="faqTags" class="block text-sm font-medium text-gray-700 mb-2">Tags</label>-->
+<!--                                <input type="text" id="faqTags"-->
+<!--                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"-->
+<!--                                    placeholder="Enter tags separated by commas (e.g., admission, requirements, documents)">-->
+<!--                                <p class="text-sm text-gray-500 mt-1">Separate multiple tags with commas</p>-->
+<!--                            </div>-->
+                        </div>
+
+                        <div class="flex justify-end gap-4 mt-6">
+                            <button type="button" id="cancelBtn"
+                                class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                            <button type="submit" id="saveFaqBtn"
+                                class="bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors">
+                                Save FAQ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- FAQ Table -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div class="table-container">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Category</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Question</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Answer</th>
+
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            {% for faq in faqs %}
+                            <tbody id="faqTableBody" class="bg-white divide-y divide-gray-200">
+                                <!-- FAQ items will be dynamically inserted here -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {{ faq.category.name }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900 max-w-xs truncate" title="${faq.question}">
+                                        {{ faq.question }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900 max-w-md truncate" title="${faq.answer}">
+                                        {{ faq.answer }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button onclick="deleteFaq({{ faq.id }})"
+                                                class="action-btn delete-btn">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                </td>
+                            </tbody>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            function deleteFaq(id) {
+                if (confirm("Are you sure you want to delete this FAQ?")) {
+                    window.location.href = `{% url 'admin_faq_delete' %}?id=${id}`;
+                }
+            }
+
+            // // FAQ Management System
+            // class FAQManager {
+            //     constructor() {
+            //         this.faqs = [
+            //             {
+            //                 id: 1,
+            //                 category: 'admissions',
+            //                 question: 'What are the admission requirements for undergraduate programs?',
+            //                 answer: 'Undergraduate admission requirements include a high school diploma or equivalent, minimum GPA of 3.0, SAT/ACT scores, and completed application with personal statement.'
+            //             },
+            //             {
+            //                 id: 2,
+            //                 category: 'campus',
+            //                 question: 'What dining options are available on campus?',
+            //                 answer: 'Campus dining includes the main cafeteria, food court with various restaurants, coffee shops, and vending machines located throughout the campus.'
+            //             },
+            //             {
+            //                 id: 3,
+            //                 category: 'scholarships',
+            //                 question: 'What scholarships are available for international students?',
+            //                 answer: 'International students can apply for merit-based scholarships, need-based aid, and specific international student scholarships. Applications are due by March 1st.'
+            //             },
+            //             {
+            //                 id: 4,
+            //                 category: 'library',
+            //                 question: 'What are the library hours?',
+            //                 answer: 'The main library is open Monday-Thursday 8AM-10PM, Friday 8AM-6PM, Saturday 10AM-6PM, and Sunday 12PM-8PM. Hours may vary during holidays.'
+            //             }
+            //         ];
+            //         this.currentEditId = null;
+            //         this.init();
+            //     }
+            //
+            //     init() {
+            //         this.bindEvents();
+            //         this.renderFAQs();
+            //     }
+            //
+            //     bindEvents() {
+            //         // Modal controls
+            //         document.getElementById('addFaqBtn').addEventListener('click', () => this.openModal());
+            //         document.getElementById('closeModal').addEventListener('click', () => this.closeModal());
+            //         document.getElementById('cancelBtn').addEventListener('click', () => this.closeModal());
+            //
+            //         // Form submission
+            //         document.getElementById('faqForm').addEventListener('submit', (e) => this.handleSubmit(e));
+            //
+            //         // Search and filter
+            //         document.getElementById('searchInput').addEventListener('input', () => this.renderFAQs());
+            //         document.getElementById('categoryFilter').addEventListener('change', () => this.renderFAQs());
+            //
+            //         // Profile dropdown
+            //         document.getElementById('profile-dropdown-btn').addEventListener('click', () => {
+            //             const dropdown = document.getElementById('profile-dropdown');
+            //             dropdown.classList.toggle('show');
+            //         });
+            //
+            //         // Close dropdown when clicking outside
+            //         document.addEventListener('click', (e) => {
+            //             if (!e.target.closest('#profile-dropdown-btn')) {
+            //                 document.getElementById('profile-dropdown').classList.remove('show');
+            //             }
+            //         });
+            //
+            //         // Close modal when clicking outside
+            //         document.getElementById('faqModal').addEventListener('click', (e) => {
+            //             if (e.target === document.getElementById('faqModal')) {
+            //                 this.closeModal();
+            //             }
+            //         });
+            //     }
+            //
+            //     openModal(faq = null) {
+            //         const modal = document.getElementById('faqModal');
+            //         const title = document.getElementById('modalTitle');
+            //
+            //         if (faq) {
+            //             title.textContent = 'Edit FAQ';
+            //             this.currentEditId = faq.id;
+            //             document.getElementById('faqCategory').value = faq.category;
+            //             document.getElementById('faqQuestion').value = faq.question;
+            //             document.getElementById('faqAnswer').value = faq.answer;
+            //         } else {
+            //             title.textContent = 'Add New FAQ';
+            //             this.currentEditId = null;
+            //             document.getElementById('faqForm').reset();
+            //         }
+            //
+            //         modal.classList.add('show');
+            //     }
+            //
+            //     closeModal() {
+            //         document.getElementById('faqModal').classList.remove('show');
+            //         this.currentEditId = null;
+            //         document.getElementById('faqForm').reset();
+            //     }
+            //
+            //     handleSubmit(e) {
+            //         e.preventDefault();
+            //
+            //         const formData = {
+            //             category: document.getElementById('faqCategory').value,
+            //             question: document.getElementById('faqQuestion').value,
+            //             answer: document.getElementById('faqAnswer').value
+            //         };
+            //
+            //         if (this.currentEditId) {
+            //             this.updateFAQ(this.currentEditId, formData);
+            //         } else {
+            //             this.addFAQ(formData);
+            //         }
+            //
+            //         this.closeModal();
+            //         this.renderFAQs();
+            //     }
+            //
+            //     addFAQ(faqData) {
+            //         const newFAQ = {
+            //             id: Math.max(...this.faqs.map(f => f.id)) + 1,
+            //             ...faqData
+            //         };
+            //         this.faqs.push(newFAQ);
+            //     }
+            //
+            //     updateFAQ(id, faqData) {
+            //         const index = this.faqs.findIndex(f => f.id === id);
+            //         if (index !== -1) {
+            //             this.faqs[index] = { ...this.faqs[index], ...faqData };
+            //         }
+            //     }
+            //
+            //     deleteFAQ(id) {
+            //         if (confirm('Are you sure you want to delete this FAQ?')) {
+            //             this.faqs = this.faqs.filter(f => f.id !== id);
+            //             this.renderFAQs();
+            //         }
+            //     }
+            //
+            //     getCategoryBadge(category) {
+            //         const categoryMap = {
+            //             'admissions': { name: 'Admissions', class: 'category-admissions' },
+            //             'campus': { name: 'Campus', class: 'category-campus' },
+            //             'scholarships': { name: 'Scholarships', class: 'category-scholarships' },
+            //             'library': { name: 'Library', class: 'category-library' }
+            //         };
+            //
+            //         const cat = categoryMap[category] || { name: category, class: 'category-admissions' };
+            //         return `<span class="category-badge ${cat.class}">${cat.name}</span>`;
+            //     }
+            //
+            //     renderFAQs() {
+            //         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            //         const categoryFilter = document.getElementById('categoryFilter').value;
+            //
+            //         let filteredFAQs = this.faqs;
+            //
+            //         if (categoryFilter) {
+            //             filteredFAQs = filteredFAQs.filter(faq => faq.category === categoryFilter);
+            //         }
+            //
+            //         if (searchTerm) {
+            //             filteredFAQs = filteredFAQs.filter(faq =>
+            //                 faq.question.toLowerCase().includes(searchTerm) ||
+            //                 faq.answer.toLowerCase().includes(searchTerm)
+            //             );
+            //         }
+            //
+            //         const tbody = document.getElementById('faqTableBody');
+            //         tbody.innerHTML = '';
+            //
+            //         filteredFAQs.forEach(faq => {
+            //             const row = document.createElement('tr');
+            //             row.innerHTML = `
+            //             <td class="px-6 py-4 whitespace-nowrap">
+            //                 ${this.getCategoryBadge(faq.category)}
+            //             </td>
+            //             <td class="px-6 py-4">
+            //                 <div class="text-sm text-gray-900 max-w-xs truncate" title="${faq.question}">
+            //                     ${faq.question}
+            //                 </div>
+            //             </td>
+            //             <td class="px-6 py-4">
+            //                 <div class="text-sm text-gray-600 max-w-md truncate" title="${faq.answer}">
+            //                     ${faq.answer}
+            //                 </div>
+            //             </td>
+            //             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            //                 <button onclick="faqManager.openModal(${JSON.stringify(faq).replace(/"/g, '&quot;')})"
+            //                         class="action-btn edit-btn mr-2">
+            //                     <i class="fas fa-edit"></i> Edit
+            //                 </button>
+            //                 <button onclick="faqManager.deleteFAQ(${faq.id})"
+            //                         class="action-btn delete-btn">
+            //                     <i class="fas fa-trash"></i> Delete
+            //                 </button>
+            //             </td>
+            //         `;
+            //             tbody.appendChild(row);
+            //         });
+            //
+            //         if (filteredFAQs.length === 0) {
+            //             const row = document.createElement('tr');
+            //             row.innerHTML = `
+            //             <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+            //                 No FAQs found matching your criteria.
+            //             </td>
+            //         `;
+            //             tbody.appendChild(row);
+            //         }
+            //     }
+            // }
+            //
+            // // Initialize FAQ Manager
+            // const faqManager = new FAQManager();
+        </script>
+
+        <script src="{% static 'js/admin-function.js' %}"></script>
+</body>
+
+</html>

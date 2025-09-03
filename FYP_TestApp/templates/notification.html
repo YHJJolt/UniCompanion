@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Notifications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<!-- heading -->
+
+<body class="bg-gray-50">
+{% include  'includes/navBar.html' %}
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+                {% include  'includes/sidebar.html' %}
+
+            <div class="flex-1">
+                <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-2xl font-bold text-gray-800">Notifications</h1>
+<!--                        <button class="text-sm text-primary-600 hover:text-primary-800 font-medium">-->
+<!--                            Mark all as read-->
+<!--                        </button>-->
+                    </div>
+
+                    <!-- Main notification list in content area -->
+
+                    <div class="space-y-2">
+                        {% for notif in notifications %}
+                        <div class="notification-item bg-white border border-gray-200 rounded-lg">
+                            <img class="notification-avatar mr-4" src="/media/{{ notif.user.image }}">
+                            <div class="flex-1">
+                                {% if notif.type == "post_like" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> liked your post "{{ notif.title }}"</p>
+                                {% elif notif.type == "post_dislike" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> disliked your post "{{ notif.title }}"</p>
+                                {% elif notif.type == "comment_like" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> liked your comment in "{{ notif.title }}"</p>
+                                {% elif notif.type == "comment_dislike" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> disliked your comment "{{ notif.title }}"</p>
+                                {% elif notif.type == "profile_like" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> liked your profile</p>
+                                {% elif notif.type == "profile_dislike" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> disliked your profile</p>
+                                {% elif notif.type == "comment_add" %}
+                                <p class="text-sm text-gray-800"><strong>{{ notif.user.username }}</strong> added a comment to your post "{{ notif.title }}"</p>
+                                {% endif %}
+                                <p class="text-xs text-gray-500 mt-1">{{ notif.created_at }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include Alpine.js -->
+    <script src="{% static 'js/function.js' %}"></script>
+</body>
+
+</html>

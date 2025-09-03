@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body class="bg-gray-50">
+    {% include 'includes/navBar.html' %}
+<!--    <header class="bg-white shadow-sm sticky top-0 z-50">-->
+<!--        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">-->
+<!--            <div class="flex justify-between items-center h-16">-->
+<!--                &lt;!&ndash; Layout with centered search bar &ndash;&gt;-->
+<!--                <div class="flex items-center justify-between w-full">-->
+<!--                    &lt;!&ndash; Left side - Logo &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 flex items-center">-->
+<!--                        <a href="/home"-->
+<!--                            class="text-primary-600 font-bold text-xl hover:text-primary-700 transition-colors">UniCompanion</a>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Center - Search &ndash;&gt;-->
+<!--                    <div class="flex-1 flex justify-center">-->
+<!--                        <div class="relative w-96">-->
+<!--                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">-->
+<!--                                <i class="fas fa-search text-gray-400"></i>-->
+<!--                            </div>-->
+<!--                            <input type="text" placeholder="Search"-->
+<!--                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Right side - Empty or for future elements &ndash;&gt;-->
+<!--                    <div class="flex-shrink-0 w-40">-->
+<!--                        &lt;!&ndash; Placeholder to balance the layout &ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Updated Header with Menu and Notification Dropdowns &ndash;&gt;-->
+<!--                &lt;!&ndash; Right side - Icons and Profile &ndash;&gt;-->
+<!--                <div class="flex items-center space-x-4 relative">-->
+<!--                    &lt;!&ndash; Notification Bell &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="notification-btn-header"-->
+<!--                            class="p-1 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"-->
+<!--                            title="View notifications">-->
+<!--                            <i class="fas fa-bell text-xl"></i>-->
+<!--                            &lt;!&ndash; Notification indicator dot &ndash;&gt;-->
+<!--                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>-->
+<!--                        </button>-->
+<!--                        &lt;!&ndash; Notification Dropdown &ndash;&gt;-->
+<!--                        <div id="notification-dropdown-header" class="notification-dropdown">-->
+<!--                            <div class="p-4 border-b border-gray-200">-->
+<!--                                <h3 class="font-semibold text-gray-800">Notifications</h3>-->
+<!--                            </div>-->
+<!--                            <div class="notification-list">-->
+<!--                                <div class="notification-item">-->
+<!--                                    <span class="notification-avatar mr-4">AM</span>-->
+<!--                                    <div class="flex-1">-->
+<!--                                        <p class="notification-text"><strong>Alex Miller</strong> liked your post-->
+<!--                                            "Summer Collection 2025"</p>-->
+<!--                                        <p class="notification-time">5h ago</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <span class="notification-avatar mr-4">JS</span>-->
+<!--                                    <div class="flex-1">-->
+<!--                                        <p class="notification-text"><strong>fer Smith</strong> collected your post-->
+<!--                                            "Minimalist Design Tips"</p>-->
+<!--                                        <p class="notification-time">2d ago</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <span class="notification-avatar mr-4">RJ</span>-->
+<!--                                    <div class="flex-1">-->
+<!--                                        <p class="notification-text"><strong>Robert Johnson</strong> mentioned you in a-->
+<!--                                            comment</p>-->
+<!--                                        <p class="notification-time">5d ago</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="notification-item">-->
+<!--                                    <span class="notification-avatar mr-4">KW</span>-->
+<!--                                    <div class="flex-1">-->
+<!--                                        <p class="notification-text"><strong>Karen Williams</strong> collected your post-->
+<!--                                            "Spring Trends"</p>-->
+<!--                                        <p class="notification-time">8 May</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="p-3 text-center border-t border-gray-200">-->
+<!--                                <a href="/notification" class="text-sm text-primary-600 hover:text-primary-800">View-->
+<!--                                    all notifications</a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; User Profile Button &ndash;&gt;-->
+<!--                    <div class="relative">-->
+<!--                        <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"-->
+<!--                            aria-label="User menu">-->
+<!--                            <img src="/media/{{ profile.image }}" class="rounded-full h-8 w-8">-->
+<!--                            <span class="text-sm font-medium text-gray-700">{{ profile.username }}</span>-->
+<!--                            <i class="fas fa-chevron-down text-xs text-gray-500"></i>-->
+<!--                        </button>-->
+
+<!--                        &lt;!&ndash; Profile Dropdown Menu &ndash;&gt;-->
+<!--                        <div id="profile-dropdown" class="menu-dropdown">-->
+<!--                            <div class="py-2">-->
+<!--                                <a href="/app_settings" class="menu-item">-->
+<!--                                    <i class="fas fa-cog"></i>-->
+<!--                                    <span>App Settings</span>-->
+<!--                                </a>-->
+<!--                                <div class="menu-item">-->
+<!--                                    <i class="fas fa-moon"></i>-->
+<!--                                    <span>Dark Mode</span>-->
+<!--                                    <label class="switch">-->
+<!--                                        <input type="checkbox" id="theme-toggle">-->
+<!--                                        <span class="slider"></span>-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                                <div class="menu-divider"></div>-->
+<!--                                <a href="/help_center" class="menu-item">-->
+<!--                                    <i class="fas fa-question-circle"></i>-->
+<!--                                    <span>Help Center</span>-->
+<!--                                </a>-->
+<!--                                <a href="/" class="menu-item">-->
+<!--                                    <i class="fas fa-sign-out-alt"></i>-->
+<!--                                    <span>Sign Out</span>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </header>-->
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include 'includes/sidebar.html' %}
+<!--            &lt;!&ndash; Left Sidebar &ndash;&gt;-->
+<!--            <div class="w-full md:w-56 flex-shrink-0">-->
+<!--                <nav class="space-y-1">-->
+<!--                    <a href="/home" class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-home mr-3 text-gray-500"></i>-->
+<!--                        Home-->
+<!--                    </a>-->
+<!--                    <a href="/calendar"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-calendar mr-3 text-gray-500"></i>-->
+<!--                        Events-->
+<!--                    </a>-->
+<!--                    <a href="/saved"-->
+<!--                        class="sidebar-item flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-bookmark mr-3 text-gray-500"></i>-->
+<!--                        Saved-->
+<!--                    </a>-->
+<!--                    <a href="/profile"-->
+<!--                        class="sidebar-item active flex items-center px-4 py-3 text-sm font-medium rounded-md">-->
+<!--                        <i class="fas fa-user mr-3 text-primary-600"></i>-->
+<!--                        Profile-->
+<!--                    </a>-->
+<!--                </nav>-->
+<!--            </div>-->
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <!-- Profile Header -->
+                <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                    <div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+                        <!-- Profile Photo -->
+                        <div class="relative">
+                            <img id="profile-photo"
+                                src="/media/{{ profile.image }}"
+                                alt="Profile Photo" class="profile-photo rounded-full shadow-md">
+                            <button id="edit-photo-btn"
+                                class="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 {% if not ownProfile %} hidden {% endif %}"
+                                aria-label="Change profile photo" title="Change Photo">
+                                <i class="fas fa-camera text-primary-600"></i>
+                            </button>
+                            <form id="image_form" method="POST" action="{% url 'profile_edit' %}?email={{ profile.stu_email }}" enctype="multipart/form-data">
+                                {% csrf_token %}
+<!--                            <input type="file" id="main-photo-upload" accept="image/*" class="hidden">-->
+                                {{ editProfileImageForm.image }}
+                            </form>
+                        </div>
+
+                        <!-- Profile Info -->
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h1 id="profile-name" class="text-2xl font-bold text-gray-800">{{ profile.username }}</h1>
+                                <button id="edit-profile-btn" class="text-gray-500 hover:text-primary-600 {% if not ownProfile %} hidden {% endif %}"
+                                    aria-label="Edit profile name and bio">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+
+                            <p id="profile-bio" class="text-gray-600 mb-4">{{ profile.description }}</p>
+
+                            <div class="mb-4">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">Reputation Level</span>
+                                </div>
+                                <div
+                                    class="reputation-level-container border border-gray-200 rounded-md p-3 flex items-center justify-between bg-gray-50">
+                                    <div class="flex items-center">
+                                        <div id="reputation-badge"
+                                            class="reputation-badge h-10 w-10 rounded-full flex items-center justify-center text-white mr-3 bg-purple-600">
+                                            <i id="reputation-icon" class="fas fa-award"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-base font-semibold text-gray-800" id="reputation-level">
+                                                Level 3</div>
+                                            <div class="text-sm text-gray-600" id="reputation-title">trusted</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="text-xs font-medium text-primary-600 mr-2"
+                                            id="reputation-points">85 pts</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Divider -->
+                <div class="border-t border-gray-200 my-6"></div>
+
+                <!-- Comment Section-->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Community Feedback</h2>
+                    <div class="flex items-center space-x-6 text-sm text-gray-600">
+                        <div class="flex items-center hover:text-green-600 focus:outline-none"
+                            aria-label="Like feedback">
+                            <i class="fas fa-thumbs-up text-green-500 mr-1"></i><span id="total-likes"></span>
+                        </div>
+                        <div class="flex items-center hover:text-red-600 focus:outline-none"
+                            aria-label="Dislike feedback">
+                            <i class="fas fa-thumbs-down text-red-500 mr-1"></i><span id="total-dislikes"></span>
+                        </div>
+                            <button class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                            onclick="reportContent('user', {{ profile.user_id }}, '{{ csrf_token }}')" title="Report this post">
+                            <i id="reportIcon" class="fas fa-flag"></i><span id="reportCount" class="text-sm"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Modal -->
+                <div id="reportModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+                        <button onclick="closeReportModal()"
+                            class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                        <h2 class="text-xl font-semibold mb-2">Submit a report</h2>
+                        <p class="mb-4 text-gray-600 text-sm">Let us know what's happening, and we'll look into it.</p>
+                        <div id="reportReasons" class="flex flex-wrap gap-2 mb-4">
+                            <!-- Reasons will be injected by JS -->
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button onclick="closeReportModal()"
+                                class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button onclick="submitReport()"
+                                class="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-700">Submit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Comment Button -->
+                <div class="mb-6 {% if ownProfile %} hidden {% endif %}">
+                    <button id="add-comment-btn"
+                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md flex items-center space-x-2 transition-colors"
+                        aria-label="Leave feedback">
+                        <i class="fas fa-plus"></i>
+                        <span>Leave Feedback</span>
+                    </button>
+                </div>
+
+                <!-- Comments List -->
+                <div id="comments-container" class="space-y-4">
+                    {% for comment in comments %}
+                    <div class="comment-item p-4 rounded-lg">
+                        <div class="flex items-start space-x-3">
+                            <img src="{{ comment.commenter.image.url }}"
+                                alt="User Avatar" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="font-semibold text-gray-800">{{ comment.commenter.username}}</span>
+                                    <span class="text-xs text-gray-500">{{ comment.created_at }}</span>
+                                    {% if comment.profile_upvote %}
+                                    <span
+                                        class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs flex items-center">
+                                        <i class="fas fa-thumbs-up mr-1"></i>
+                                        Insightful
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs flex items-center">
+                                        <i class="fas fa-thumbs-down mr-1"></i>
+                                        Not Helpful
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <p class="text-gray-700 mb-3">{{ comment.profile_feedback }}</p>
+                                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+<!--                    <div class="comment-item p-4 rounded-lg">-->
+<!--                        <div class="flex items-start space-x-3">-->
+<!--                            <img src="https://i.pinimg.com/originals/4f/51/d4/4f51d49751ceb0a9a172dc6ffa9eef78.jpg"-->
+<!--                                alt="User Avatar" class="w-10 h-10 rounded-full">-->
+<!--                            <div class="flex-1">-->
+<!--                                <div class="flex items-center space-x-2 mb-2">-->
+<!--                                    <span class="font-semibold text-gray-800">Veronica</span>-->
+<!--                                    <span class="text-xs text-gray-500">1 week ago</span>-->
+<!--                                    <span-->
+<!--                                        class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs flex items-center">-->
+<!--                                        <i class="fas fa-thumbs-up mr-1"></i>-->
+<!--                                        Insightful-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                                <p class="text-gray-700 mb-3">Great collaboration partner! Janice contributed excellent-->
+<!--                                    code to our group project and was very responsive to feedback. Would definitely work-->
+<!--                                    with her again.</p>-->
+<!--                                <div class="flex items-center space-x-4 text-xs text-gray-500"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+                <!-- Load More Button -->
+<!--                <div class="text-center mt-6">-->
+<!--                    <button class="text-primary-600 hover:text-primary-700 font-medium">-->
+<!--                        Load More Comments-->
+<!--                    </button>-->
+<!--                </div>-->
+            </div>
+
+        </div>
+    </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="edit-modal" id="edit-modal">
+        <div class="edit-modal-content shadow-xl">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Edit Profile</h3>
+                    <button id="close-edit-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="profile-form" method="POST" action="{% url 'profile_edit' %}?email={{ profile.stu_email }}">
+                    {% csrf_token %}
+                    <div class="space-y-4">
+                        <div class="flex flex-col items-center">
+                            <div class="relative mb-4">
+                                <img id="edit-profile-photo"
+                                    src="/media/{{ profile.image }}"
+                                    alt="Profile Photo" class="profile-photo rounded-full shadow-md">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="{{ editProfileForm.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ editProfileForm.username.label }}</label>
+<!--                            <input type="text" id="edit-name" value="Janice Doe" maxlength="20"-->
+<!--                                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">-->
+                            {{ editProfileForm.username }}
+                        </div>
+
+                        <div>
+                            <label for="{{ editProfileForm.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">{{ editProfileForm.description.label }}</label>
+<!--                            <textarea id="edit-bio" rows="3"-->
+<!--                                class="block w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">Something about loving computer science, go marry it fker</textarea>-->
+                            {{ editProfileForm.description }}
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" id="cancel-edit"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 foul-button">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="comment-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold text-gray-800">Leave Feedback</h3>
+                <button id="close-comment-modal" class="text-gray-500 hover:text-gray-800"
+                    aria-label="Close feedback modal">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            <form id="comment-form" method="POST" action="{% url 'profile_add' %}?email={{ profile.stu_email }}">
+                {% csrf_token %}
+                <div>
+                    <label for="{{ profileForm.profile_feedback.id_for_label }}" class="sr-only">{{ profileForm.profile_feedback.label }}</label>
+<!--                    <textarea id="comment-text" rows="4"-->
+<!--                        class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"-->
+<!--                        placeholder="Share your thoughts..."></textarea>-->
+                    {{ profileForm.profile_feedback }}
+                </div>
+                {{ profileForm.votes }}
+                <div id="feedback-controls" class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Feedback Type</label>
+                    <div class="flex items-center space-x-6 mb-4">
+                        <button type="button" id="feedback-insightful-btn"
+                            class="flex items-center px-3 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-green-50 focus:outline-none">
+                            <i class="fas fa-thumbs-up mr-2"></i> Insightful
+                        </button>
+                        <button type="button" id="feedback-not-helpful-btn"
+                            class="flex items-center px-3 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-red-50 focus:outline-none">
+                            <i class="fas fa-thumbs-down mr-2"></i> Not Helpful
+                        </button>
+                    </div>
+                    <button type="submit" id="post-comment-btn"
+                        class="w-full bg-primary-600 text-white py-2 px-4 rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 foul-button"
+                        disabled>Post Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/function.js' %}"></script>
+    <script>
+        // Edit Profile Modal
+        const editModal = document.getElementById('edit-modal');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const editPhotoBtn = document.getElementById('edit-photo-btn');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const cancelEdit = document.getElementById('cancel-edit');
+        const mainPhotoUpload = document.getElementById('main-photo-upload');
+
+        editProfileBtn.addEventListener('click', () => {
+            editModal.style.display = 'flex';
+        });
+
+        // Camera button on main profile triggers file input
+        editPhotoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            mainPhotoUpload.click();
+        });
+
+
+        mainPhotoUpload.addEventListener('change', () => {
+            console.log(document.getElementById("image_form"));
+            document.getElementById("image_form").submit();
+        })
+
+        closeEditModal.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+
+        cancelEdit.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === editModal) {
+                editModal.style.display = 'none';
+            }
+        });
+
+        // Track manual likes/dislikes
+        let upvotes = {{ upvotes }};
+        let downvotes = {{ downvotes }};
+
+        // Utility to update feedback counters based on comments
+        function updateFeedbackCounters() {
+            // Add manual likes/dislikes from button clicks
+            document.getElementById('total-likes').textContent = upvotes;
+            document.getElementById('total-dislikes').textContent = downvotes;
+        }
+
+        function updateReputationLevel() {
+            const points = upvotes - downvotes;
+            const badge = document.getElementById('reputation-badge');
+            const icon = document.getElementById('reputation-icon');
+            const level = document.getElementById('reputation-level');
+            const title = document.getElementById('reputation-title');
+            const pts = document.getElementById('reputation-points');
+            let lvl = 1, lvlTitle = 'newbie', color = 'bg-green-600', iconClass = 'fa-user', iconHtml = '<i class="fas fa-user"></i>';
+            if (points >= 4) {
+                lvl = 5; lvlTitle = 'legend'; color = 'bg-red-600'; iconClass = 'fa-crown'; iconHtml = '<i class="fas fa-crown"></i>';
+            } else if (points >= 3) {
+                lvl = 4; lvlTitle = 'influencer'; color = 'bg-orange-500'; iconClass = 'fa-fire'; iconHtml = '<i class=\'fas fa-fire\'></i>';
+            } else if (points >= 2) {
+                lvl = 3; lvlTitle = 'trusted'; color = 'bg-purple-600'; iconClass = 'fa-star'; iconHtml = '<i class=\'fas fa-star\'></i><i class=\'fas fa-star ml-1\'></i>';
+            } else if (points >= 1) {
+                lvl = 2; lvlTitle = 'contributor'; color = 'bg-blue-600'; iconClass = 'fa-star'; iconHtml = '<i class=\'fas fa-star\'></i>';
+            }
+            // Set badge color
+            badge.className = `reputation-badge h-10 w-10 rounded-full flex items-center justify-center text-white mr-3 ${color}`;
+            // Set icon
+            if (lvl === 3) {
+                badge.innerHTML = '<i class="fas fa-star"></i><i class="fas fa-star ml-1"></i>';
+            } else if (lvl === 4) {
+                badge.innerHTML = '<i class="fas fa-fire"></i>';
+            } else if (lvl === 5) {
+                badge.innerHTML = '<i class="fas fa-crown"></i>';
+            } else if (lvl === 2) {
+                badge.innerHTML = '<i class="fas fa-star"></i>';
+            } else {
+                badge.innerHTML = '<i class="fas fa-user"></i>';
+            }
+            // Set level and title
+            level.textContent = `Level ${lvl}`;
+            title.textContent = lvlTitle;
+            pts.textContent = `${points} pts`;
+        }
+        // Update reputation on every relevant action
+        function updateAllFeedback() {
+            updateFeedbackCounters();
+            updateReputationLevel();
+        }
+
+         updateAllFeedback();
+
+        // Feedback Modal Logic
+        const addCommentBtn = document.getElementById('add-comment-btn');
+        const commentModal = document.getElementById('comment-modal');
+        const closeCommentModal = document.getElementById('close-comment-modal');
+        const commentForm = document.getElementById('comment-form');
+        const commentText = document.getElementById('comment-text');
+        const feedbackControls = document.getElementById('feedback-controls');
+        const insightfulBtn = document.getElementById('feedback-insightful-btn');
+        const notHelpfulBtn = document.getElementById('feedback-not-helpful-btn');
+        const postCommentBtn = document.getElementById('post-comment-btn');
+        const commentsContainer = document.getElementById('comments-container');
+        let selectedFeedback = null;
+
+        addCommentBtn.addEventListener('click', function () {
+            commentModal.classList.remove('hidden');
+            commentText.value = '';
+            // feedbackControls.classList.add('hidden');
+            selectedFeedback = null;
+            insightfulBtn.classList.remove('bg-green-100', 'text-green-800', 'border-green-400');
+            notHelpfulBtn.classList.remove('bg-red-100', 'text-red-800', 'border-red-400');
+            postCommentBtn.disabled = true;
+        });
+        closeCommentModal.addEventListener('click', function () {
+            commentModal.classList.add('hidden');
+        });
+        // Show controls when typing
+        commentText.addEventListener('input', function () {
+            if (commentText.value.trim().length > 0 && selectedFeedback != null) {
+                if (checkBadWords(commentText.value, null)) {
+                    postCommentBtn.disabled = false;
+                }
+            } else {
+                postCommentBtn.disabled = true;
+            }
+        });
+        // Feedback type selection
+        insightfulBtn.addEventListener('click', function () {
+            selectedFeedback = 'insightful';
+            insightfulBtn.classList.add('bg-green-100', 'text-green-800', 'border-green-400');
+            notHelpfulBtn.classList.remove('bg-red-100', 'text-red-800', 'border-red-400');
+            if (checkBadWords(commentText.value, null)) {
+                postCommentBtn.disabled = commentText.value.trim().length === 0;
+            }
+            document.getElementById('eventVotes').value = "upvote"
+        });
+        notHelpfulBtn.addEventListener('click', function () {
+            selectedFeedback = 'not-helpful';
+            notHelpfulBtn.classList.add('bg-red-100', 'text-red-800', 'border-red-400');
+            insightfulBtn.classList.remove('bg-green-100', 'text-green-800', 'border-green-400');
+            if (checkBadWords(commentText.value, null)) {
+                postCommentBtn.disabled = commentText.value.trim().length === 0;
+            }
+            document.getElementById('eventVotes').value = "downvote"
+        });
+    </script>
+</body>
+
+</html>

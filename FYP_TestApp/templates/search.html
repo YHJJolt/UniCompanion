@@ -1,0 +1,435 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body>
+    {% include  'includes/navBar.html' %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6">
+            {% include  'includes/sidebar.html' %}
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <p><b class="recommended-heading">Profiles Found</b></p>
+                {% for profile in profileSearch %}
+                <!-- User Profile-->
+                <a href="/profile/?email={{ profile.stu_email }}">
+                    <div class="flex flex-col mb-4">
+                        <div class="post-card bg-white rounded-lg shadow-sm p-6 transition duration-300 ease-in-out">
+                            <div class="flex items-start justify-between">
+                                <div class="flex space-x-3 items-center"> <!-- Added items-center here -->
+                                    <div class="flex-shrink-0">
+                                        <!-- Profile pic -->
+                                        <div>
+                                            <img src="/media/{{ profile.image }}" class="h-10 w-10 rounded-full bg-purple-200 flex items-center justify-center text-primary-600" alt="">
+                                        </div>
+                                    </div>
+                                    <p class="text-sm font-medium text-gray-900">{{ profile.username }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+
+                <!-- Divider Line -->
+                <div class="border-t border-gray-200 my-4"></div>
+
+                <!-- Posts Feed -->
+                <div class="space-y-4">
+                    <p><b class="recommended-heading">Posts Found</b></p>
+                    {% for post in postSearch %}
+                    <div class="post-card post-card-link bg-white rounded-lg shadow-sm p-6 transition duration-300 ease-in-out cursor-pointer hover:shadow-md"
+                        id="{{ post.post_id }}">
+                        <div class="flex items-start justify-between">
+                            <div class="flex space-x-3">
+                                <div class="flex-shrink-0">
+                                    <img src="/media/{{ post.user.image }}" class="h-10 w-10 rounded-full" alt="user pfp">
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">{{ post.user.username }}</p>
+                                    <p class="text-xs text-gray-500"> {{ post.created_at }}</p>
+                                </div>
+                            </div>
+                            <!-- Right side with flair and menu button -->
+                            <div class="flex items-start">
+                                <!-- Flair as a direct element, not position:absolute -->
+                                <div
+                                    class="{{ post.flair.flair_color }} text-white text-xs font-bold px-3 py-1 rounded-md mr-2 inline-block">
+                                    {{ post.flair.flair_name }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h3 class="text-lg font-semibold text-gray-900">{{ post.title }}
+                            </h3>
+                            <p class="mt-2 text-gray-700">{{ post.description|truncatechars:200 }}
+
+                            </p>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex space-x-4">
+                                <!-- Thumbs Up / Like Button -->
+                                <button id="likeButton-{{ post.post_id }}"
+                                    {% if post.isUpvoted %}
+                                        class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleLike({{ post.post_id }})">
+                                        <i id="likeIcon-{{ post.post_id }}" class="fas fa-thumbs-up mr-1"></i>
+                                    {% else %}
+                                        class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleLike({{ post.post_id }})">
+                                        <i id="likeIcon-{{ post.post_id }}" class="far fa-thumbs-up mr-1"></i>
+                                    {% endif %}
+                                    <span id="likeCount-{{ post.post_id }}" class="text-sm">{{ post.getUpvotes }}</span>
+                                </button>
+
+                                <!-- Thumbs Down / Dislike Button -->
+                                <button id="dislikeButton-{{ post.post_id }}"
+                                    {% if post.isDownvoted %}
+                                        class="flex items-center text-primary-600 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleDislike({{ post.post_id }})">
+                                        <i id="dislikeIcon-{{ post.post_id }}" class="fas fa-thumbs-down mr-1"></i>
+                                    {% else %}
+                                        class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"
+                                        onclick="toggleDislike({{ post.post_id }})">
+                                        <i id="dislikeIcon-{{ post.post_id }}" class="far fa-thumbs-down mr-1"></i>
+                                    {% endif %}
+                                    <span id="dislikeCount-{{ post.post_id }}" class="text-sm">{{ post.getDownvotes }}</span>
+                                </button>
+
+                                <!-- Comment Button -->
+                                <button class="flex items-center text-gray-500 hover:text-primary-600"
+                                    onclick="window.location.href='/indivPost?postId={{ post.post_id }}'">
+                                    <i id="commentIcon" class="far fa-comment mr-1"></i>
+                                    <span id="comment" class="text-sm">{{ post.getComments }}</span>
+                                </button>
+
+                                <!-- Bookmark Button -->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"-->
+<!--                                    onclick="bookMarkBtn()" title="Bookmark this post">-->
+<!--                                    <i id="bookmarkIcon" class="far fa-bookmark"></i>-->
+<!--                                    <span id="bookmarkCount" class="text-sm">{{ post.getSaves }}</span>-->
+<!--                                </button>-->
+
+                                <!-- Share Button -->
+                                <button class="rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                                    onclick="shareBtn()" title="Share this post">
+                                    <i id="shareIcon" class="fas fa-share"></i>
+                                </button>
+
+                                <!-- Report button -->
+                                <button
+                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50"
+                                    onclick="reportContent('post', {{ post.post_id }}, '{{ csrf_token }}')" title="Report this post">
+                                    <i id="reportIcon" class="fas fa-flag"></i>
+                                    <span id="reportCount" class="text-sm"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Report Modal -->
+                    <div id="reportModal"
+                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+                        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+                            <button onclick="closeReportModal()"
+                                class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                            <h2 class="text-xl font-semibold mb-2">Submit a report</h2>
+                            <p class="mb-4 text-gray-600 text-sm">Let us know what's happening, and we'll look into it.</p>
+                            <div id="reportReasons" class="flex flex-wrap gap-2 mb-4">
+                                <!-- Reasons will be injected by JS -->
+                            </div>
+                            <div class="flex justify-end gap-2">
+                                <button onclick="closeReportModal()"
+                                    class="px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-100">Cancel</button>
+                                <button onclick="submitReport()"
+                                    class="px-4 py-2 rounded bg-primary-600 text-white hover:bg-primary-700">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+<!--                    &lt;!&ndash; Post 1 &ndash;&gt;-->
+<!--                    <div class="post-card bg-white rounded-lg shadow-sm p-6 transition duration-300 ease-in-out">-->
+<!--                        <div class="flex items-start justify-between">-->
+<!--                            <div class="flex space-x-3">-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <div-->
+<!--                                        class="h-10 w-10 rounded-full bg-purple-200 flex items-center justify-center text-primary-600">-->
+<!--                                        <i class="fas fa-user-graduate"></i>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                    <p class="text-sm font-medium text-gray-900">Sarah Johnson</p>-->
+<!--                                    <p class="text-xs text-gray-500">Computer Science • 2 hours ago</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; Right side with flair and menu button &ndash;&gt;-->
+<!--                            <div class="flex items-start">-->
+<!--                                &lt;!&ndash; Flair as a direct element, not position:absolute &ndash;&gt;-->
+<!--                                <div-->
+<!--                                    class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-md mr-2 inline-block">-->
+<!--                                    Learning Resources-->
+<!--                                </div>-->
+<!--                                &lt;!&ndash;-->
+<!--                                <button class="text-gray-400 hover:text-gray-600">-->
+<!--                                    <i class="fas fa-ellipsis-h"></i>-->
+<!--                                </button>-->
+<!--                                &ndash;&gt;-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="mt-4">-->
+<!--                            <h3 class="text-lg font-semibold text-gray-900">Best resources for learning React in 2023?-->
+<!--                            </h3>-->
+<!--                            <p class="mt-2 text-gray-700">I'm starting with React and would love recommendations for-->
+<!--                                up-to-date tutorials, courses, or books. What helped you most when you were learning?-->
+<!--                            </p>-->
+<!--                        </div>-->
+<!--                        <div class="mt-4 flex items-center justify-between">-->
+<!--                            <div class="flex space-x-4">-->
+<!--                                &lt;!&ndash; Thumbs Up / Like Button &ndash;&gt;-->
+<!--                                <button id="likeButton"-->
+<!--                                    class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"-->
+<!--                                    onclick="toggleLike()">-->
+<!--                                    <i id="likeIcon" class="far fa-thumbs-up mr-1"></i>-->
+<!--                                    <span id="likeCount" class="text-sm">42</span>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Comment Button &ndash;&gt;-->
+<!--                                <button class="flex items-center text-gray-500 hover:text-primary-600">-->
+<!--                                    <i class="far fa-comment mr-1"></i>-->
+<!--                                    <span class="text-sm">8</span>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Bookmark Button &ndash;&gt;-->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50">-->
+<!--                                    <i class="far fa-bookmark"></i>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Share Button &ndash;&gt;-->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50">-->
+<!--                                    <i class="fas fa-share"></i>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Post 2 &ndash;&gt;-->
+<!--                    <div class="post-card bg-white rounded-lg shadow-sm p-6 transition duration-300 ease-in-out">-->
+<!--                        <div class="flex items-start justify-between">-->
+<!--                            <div class="flex space-x-3">-->
+<!--                                <div class="flex-shrink-0">-->
+<!--                                    <div-->
+<!--                                        class="h-10 w-10 rounded-full bg-blue-200 flex items-center justify-center text-blue-600">-->
+<!--                                        <i class="fas fa-user-tie"></i>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div>-->
+<!--                                    <p class="text-sm font-medium text-gray-900">Michael Johnson</p>-->
+<!--                                    <p class="text-xs text-gray-500">Mathematics Department • 5 hours ago</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            &lt;!&ndash; Right side with flair and menu button &ndash;&gt;-->
+<!--                            <div class="flex items-start">-->
+<!--                                &lt;!&ndash; Flair as a direct element, not position:absolute &ndash;&gt;-->
+<!--                                <div-->
+<!--                                    class="bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-md mr-2 inline-block">-->
+<!--                                    Schedule Notice-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="mt-4">-->
+<!--                            <h3 class="text-lg font-semibold text-gray-900">Reminder: Linear Algebra Midterm Next Week-->
+<!--                            </h3>-->
+<!--                            <p class="mt-2 text-gray-700">Just a reminder that the Linear Algebra midterm is scheduled-->
+<!--                                for next Tuesday. The exam will cover chapters 1-4. Office hours will be extended this-->
+<!--                                week - see the updated schedule on the course page.</p>-->
+<!--                        </div>-->
+<!--                        <div class="mt-4 flex items-center justify-between">-->
+<!--                            <div class="flex space-x-4">-->
+<!--                                &lt;!&ndash; Thumbs Up / Like Button &ndash;&gt;-->
+<!--                                <button id="likeButton"-->
+<!--                                    class="flex items-center text-gray-500 hover:text-primary-600 transition-colors duration-200"-->
+<!--                                    onclick="toggleLike()">-->
+<!--                                    <i id="likeIcon" class="far fa-thumbs-up mr-1"></i>-->
+<!--                                    <span id="likeCount" class="text-sm">42</span>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Comment Button &ndash;&gt;-->
+<!--                                <button class="flex items-center text-gray-500 hover:text-primary-600">-->
+<!--                                    <i class="far fa-comment mr-1"></i>-->
+<!--                                    <span class="text-sm">8</span>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Bookmark Button &ndash;&gt;-->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50">-->
+<!--                                    <i class="far fa-bookmark"></i>-->
+<!--                                </button>-->
+
+<!--                                &lt;!&ndash; Share Button &ndash;&gt;-->
+<!--                                <button-->
+<!--                                    class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50">-->
+<!--                                    <i class="fas fa-share"></i>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/function.js' %}"></script>
+    <script>
+        const searchQuery = "{{ searchQuery }}";
+        if (searchQuery.length !== 0) {
+            document.getElementById("searchQuery").value = searchQuery;
+        }
+
+        // Make post cards clickable (except when clicking a button inside)
+        document.querySelectorAll('.post-card-link').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('button')) return;
+                window.location.href = `/indivPost?postId=${card.id}`;
+            });
+        });
+
+        function removeLike(id) {
+            const likeButton = document.getElementById(`likeButton-${id}`);
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+            const likeCount = document.getElementById(`likeCount-${id}`);
+            const currentCount = parseInt(likeCount.textContent) || 0;
+
+            likeIcon.classList.remove('fas');
+            likeIcon.classList.add('far');
+            likeButton.classList.remove('text-primary-600');
+            likeCount.textContent = currentCount - 1;
+        }
+
+        function removeDislike(id) {
+            const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+            const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+            const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+            dislikeIcon.classList.remove('fas');
+            dislikeIcon.classList.add('far');
+            dislikeButton.classList.remove('text-primary-600');
+            dislikeCount.textContent = currentCount - 1;
+        }
+
+        // Post like functionality
+        function toggleLike(id) {
+            const likeButton = document.getElementById(`likeButton-${id}`);
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+            const likeCount = document.getElementById(`likeCount-${id}`);
+
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+
+
+            if (likeButton && likeIcon && likeCount) {
+                const currentCount = parseInt(likeCount.textContent) || 0;
+
+                fetch("{% url 'like_post' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "X-CSRFToken": "{{ csrf_token }}"
+                        },
+                        body: `postId=${id}&vote=like`
+                    })
+
+                if (likeIcon.classList.contains('far')) {
+
+                    // Like the post
+                    likeIcon.classList.remove('far');
+                    likeIcon.classList.add('fas');
+                    likeButton.classList.add('text-primary-600');
+                    likeCount.textContent = currentCount + 1;
+
+                    if (dislikeIcon.classList.contains('fas')) {
+                        removeDislike(id)
+                    }
+
+                    } else {
+                    // Unlike the post
+                    removeLike(id)
+                }
+            }
+        }
+        // Post dislike functionality
+        function toggleDislike(id) {
+            const likeIcon = document.getElementById(`likeIcon-${id}`);
+
+            const dislikeButton = document.getElementById(`dislikeButton-${id}`);
+            const dislikeIcon = document.getElementById(`dislikeIcon-${id}`);
+            const dislikeCount = document.getElementById(`dislikeCount-${id}`);
+
+            if (dislikeButton && dislikeIcon && dislikeCount) {
+                const currentCount = parseInt(dislikeCount.textContent) || 0;
+
+                fetch("{% url 'like_post' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: `postId=${id}&vote=dislike`
+                })
+                if (dislikeIcon.classList.contains('far')) {
+
+                    // dislike the post
+                    dislikeIcon.classList.remove('far');
+                    dislikeIcon.classList.add('fas');
+                    dislikeButton.classList.add('text-primary-600');
+                    dislikeCount.textContent = currentCount + 1;
+
+                    if (likeIcon.classList.contains('fas')) {
+                        removeLike(id)
+                    }
+
+                } else {
+                    // Undislike the post
+                    removeDislike(id);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

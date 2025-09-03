@@ -1,0 +1,155 @@
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Layout with centered search bar -->
+            <div class="flex items-center justify-between w-full">
+                <!-- Left side - Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/home"
+                        class="text-primary-600 font-bold text-xl hover:text-primary-700 transition-colors">UniCompanion</a>
+                </div>
+
+                <!-- Center - Search -->
+                <div class="flex-1 flex justify-center">
+                    <div class="relative w-96">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <form method="POST" action="/search/">
+                            {% csrf_token %}
+                            <input type="text" placeholder="Search" name="searchQuery" id="searchQuery"
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right side - Empty or for future elements -->
+                <div class="flex-shrink-0 w-40">
+                    <!-- Placeholder to balance the layout -->
+                </div>
+            </div>
+
+            <!-- Updated Header with Menu and Notification Dropdowns -->
+            <!-- Right side - Icons and Profile -->
+            <div class="flex items-center space-x-4 relative">
+                <!-- Notification Bell -->
+                <div class="relative">
+                    <button id="notification-btn-header"
+                        class="p-1 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                        title="View notifications">
+                        <i class="fas fa-bell text-xl"></i>
+                        <!-- Notification indicator dot -->
+                        {% if global_hasNotifications %}
+                        <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
+                        {% endif %}
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notification-dropdown-header" class="notification-dropdown">
+                        <div class="p-4 border-b border-gray-200">
+                            <h3 class="font-semibold text-gray-800">Notifications</h3>
+                            <input type="hidden" id="user_id" value="{{ user.pk }}">
+                        </div>
+                        <div class="notification-list">
+                            {% for notif in global_notifications %}
+                            <div class="notification-item">
+                                <img class="notification-avatar mr-4" src="/media/{{ notif.user.image }}">
+<!--                                <span class="notification-avatar mr-4">AM</span>-->
+                                <div class="flex-1">
+                                    {% if notif.type == "post_like" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> liked your post "{{ notif.title }}"</p>
+                                    {% elif notif.type == "post_dislike" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> disliked your post "{{ notif.title }}"</p>
+                                    {% elif notif.type == "comment_like" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> liked your comment in "{{ notif.title }}"</p>
+                                    {% elif notif.type == "comment_dislike" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> disliked your comment "{{ notif.title }}"</p>
+                                    {% elif notif.type == "profile_like" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> liked your profile</p>
+                                    {% elif notif.type == "profile_dislike" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> disliked your profile</p>
+                                    {% elif notif.type == "comment_add" %}
+                                    <p class="notification-text"><strong>{{ notif.user.username }}</strong> added a comment to your post "{{ notif.title }}"</p>
+                                    {% endif %}
+                                    <p class="notification-time">{{ notif.created_at }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+<!--                            <div class="notification-item" id="notif-2" hidden>-->
+<!--                                <span class="notification-avatar mr-4">JS</span>-->
+<!--                                <div class="flex-1">-->
+<!--                                    <p class="notification-text"><strong>Jennifer Smith</strong> collected your post-->
+<!--                                        "Minimalist Design Tips"</p>-->
+<!--                                    <p class="notification-time">2d ago</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="notification-item" id="notif-3" hidden>-->
+<!--                                <span class="notification-avatar mr-4">RJ</span>-->
+<!--                                <div class="flex-1">-->
+<!--                                    <p class="notification-text"><strong>Robert Johnson</strong> mentioned you in a-->
+<!--                                        comment</p>-->
+<!--                                    <p class="notification-time">5d ago</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="notification-item" id="notif-4" hidden>-->
+<!--                                <span class="notification-avatar mr-4">KW</span>-->
+<!--                                <div class="flex-1">-->
+<!--                                    <p class="notification-text"><strong>Karen Williams</strong> collected your post-->
+<!--                                        "Spring Trends"</p>-->
+<!--                                    <p class="notification-time">8 May</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                        </div>
+                        <div class="p-3 text-center border-t border-gray-200">
+                            <a href="/notification" class="text-sm text-primary-600 hover:text-primary-800">View
+                                all notifications</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Profile Button -->
+                <div class="relative">
+                    <button id="profile-dropdown-btn" class="flex items-center space-x-2 focus:outline-none"
+                        aria-label="User menu">
+                        <img src="/media/{{ user.image }}" class="rounded-full h-8 w-8">
+                        <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
+                        <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                    </button>
+
+                    <!-- Profile Dropdown Menu -->
+                    <div id="profile-dropdown" class="menu-dropdown">
+                        <div class="py-2">
+                            {% if user.is_superuser %}
+                            <a href="/admin_dashboard" class="menu-item">
+                               <i class="fa-solid fa-user-tie"></i>
+                                <span>Admin View</span>
+                            </a>
+                            <div class="menu-divider"></div>
+                            {% endif %}
+                            <a href="/app_settings" class="menu-item">
+                                <i class="fas fa-cog"></i>
+                                <span>App Settings</span>
+                            </a>
+                            <div class="menu-item">
+                                <i class="fas fa-moon"></i>
+                                <span>Dark Mode</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="theme-toggle">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="menu-divider"></div>
+                            <a href="/help_center" class="menu-item">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help Center</span>
+                            </a>
+                            <a href="/logout" class="menu-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Sign Out</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

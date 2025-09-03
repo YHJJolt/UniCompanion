@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCompanion - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{% static 'styles/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/design.css' %}">
+</head>
+
+<body class="admin-dashboard">
+    {% include 'includes/adminNav.html' %}
+    <div class="main-container">
+        <div class="content-wrapper">
+            {% include 'includes/adminSideBar.html' %}
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Top Bar -->
+                <header class="content-header bg-white text-black dark:text-black">
+                    <button class="sidebar-toggle hidden">
+                        <i class="toggle-icon fas fa-bars"></i>
+                    </button>
+
+                    <div class="header-title-container">
+                        <h1 class="header-title bg-white text-black dark:text-black">Admin Dashboard</h1>
+                    </div>
+                </header>
+
+                <!-- Main Content Area -->
+                <main class="content-area ">
+                    <!-- Stats Summary -->
+                    <div class="stats-summary">
+                        <div class="stat-card bg-white text-black dark:text-black">
+                            <div class="stat-value bg-white text-black dark:text-black">{{ total }}</div>
+                            <div class="stat-label bg-white text-black dark:text-black">Total Reports</div>
+                        </div>
+                        <div class="stat-card bg-white text-black dark:text-black">
+                            <div class="stat-value bg-white text-black dark:text-black">{{ post_reports }}</div>
+                            <div class="stat-label bg-white text-black dark:text-black">Pending Posts</div>
+                        </div>
+                        <div class="stat-card bg-white text-black dark:text-black">
+                            <div class="stat-value bg-white text-black dark:text-black">{{ comment_reports }}</div>
+                            <div class="stat-label bg-white text-black dark:text-black">Pending Comments</div>
+                        </div>
+                        <div class="stat-card bg-white text-black dark:text-black">
+                            <div class="stat-value bg-white text-black dark:text-black">{{ user_reports }}</div>
+                            <div class="stat-label bg-white text-black dark:text-black">Pending Users</div>
+                        </div>
+                    </div>
+
+                    <!-- Visualization Charts Section -->
+                    <div class="charts-container">
+                        <!-- Charts Row -->
+                        <div class="charts-row">
+                            <!-- Reports by Type Chart -->
+                            <div class="chart-card bg-white text-black dark:text-black">
+                                <div class="chart-header">
+                                    <h3 class="bg-white text-black dark:text-black">Reports by Type</h3>
+                                </div>
+                                <div class="chart-container bg-white text-black dark:text-black">
+                                    <!-- This would be replaced with an actual chart library like Chart.js -->
+                                    <div class="doughnut-chart-placeholder">
+                                        <div class="chart-legend">
+                                            <div class="legend-item bg-white text-black dark:text-black">
+                                                <span class="legend-color post-color"></span>
+                                                <span>Posts ({{ post_percentage }}%)</span>
+                                            </div>
+                                            <div class="legend-item bg-white text-black dark:text-black">
+                                                <span class="legend-color comment-color"></span>
+                                                <span>Comments ({{ comment_percentage }}%)</span>
+                                            </div>
+                                            <div class="legend-item bg-white text-black dark:text-black">
+                                                <span class="legend-color user-color"></span>
+                                                <span>Users ({{ user_percentage }}%)</span>
+                                            </div>
+                                        </div>
+                                        <div class="doughnut-chart" style="background: conic-gradient(
+                                          #7C3AED 0% {{ post_percentage }}%,
+                                          #10B981 {{ post_percentage }}% {{ post_percentage|add:comment_percentage }}%,
+                                          #3B82F6 {{ post_percentage|add:comment_percentage }}% 100%);">
+                                            <!-- Visual representation of the doughnut chart -->
+                                            <div class="doughnut-segment post-segment"></div>
+                                            <div class="doughnut-segment comment-segment"></div>
+                                            <div class="doughnut-segment user-segment"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/admin-function.js' %}"></script>
+</body>
+
+</html>
